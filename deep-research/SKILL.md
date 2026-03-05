@@ -93,6 +93,36 @@ Optional:
   --json           Output as JSON with metadata
 ```
 
+## Obsidian Integration
+
+All research output should be saved to the user's Obsidian vault by default.
+
+**Default output path:** `~/Documents/ObsidianNotes/Claude-Research/`
+
+**After writing the research output file, always prepend YAML frontmatter:**
+```yaml
+---
+date: YYYY-MM-DD
+tags:
+  - research
+  - [topic-specific tags]
+source: claude-code
+project: [current project name or 'general-research']
+---
+```
+
+**Add wiki-links** for cross-referencing related notes:
+```markdown
+> Related: [[related-topic-1]] [[related-topic-2]]
+```
+
+**File naming convention:** `topic-slug-YYYY-MM.md` (e.g., `tech-layoffs-march-2026.md`, `deel-account-overview.md`)
+
+**Account research** goes to: `~/Documents/ObsidianNotes/Claude-Research/accounts/`
+**General research** goes to: `~/Documents/ObsidianNotes/Claude-Research/`
+
+If the `-o` flag is not provided, default to the Obsidian path with an auto-generated filename based on the query.
+
 ## Research Patterns
 
 See [references/research-patterns.md](references/research-patterns.md) for detailed prompt patterns and multi-source workflows.
