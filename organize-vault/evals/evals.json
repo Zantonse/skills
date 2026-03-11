@@ -1,0 +1,23 @@
+{
+  "skill_name": "organize-vault",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "my obsidian vault is a mess, can you organize my notes into folders",
+      "expected_output": "Vault audited, loose files categorized by filename patterns, moved into topical folders, summary of changes reported",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "I have a bunch of unfiled notes sitting in my Claude-Research folder. Can you sort them into subfolders?",
+      "expected_output": "Claude-Research directory scanned, loose files identified and categorized, moved into appropriate subfolders, zero loose files remaining",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "tidy up my obsidian notes - there are files everywhere and I can't find anything",
+      "expected_output": "Full vault audit, folder taxonomy designed, files moved autonomously, clean tree structure reported with file counts per folder",
+      "files": []
+    }
+  ]
+}

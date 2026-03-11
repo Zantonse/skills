@@ -123,6 +123,143 @@ project: [current project name or 'general-research']
 
 If the `-o` flag is not provided, default to the Obsidian path with an auto-generated filename based on the query.
 
+## Deep Mode (`--deep`)
+
+### When to Trigger
+
+Deep mode activates when the user's message contains:
+- "deep dive on [topic]"
+- "deep research [topic]"
+- "research [topic] --deep"
+- "thorough deep dive [topic]"
+- "comprehensive research [topic]"
+
+Deep mode uses **parallel specialist agents** for web research, then **Gemini for synthesis** — combining Claude's web scraping capabilities with Gemini's large context window for cross-referencing.
+
+### How It Works
+
+#### Step 1: Decompose the Question into Research Domains
+
+Break the user's question into 4-6 independent research domains. Each domain becomes a specialist agent. For example, "best AI video creation tools for realistic 15-minute videos" decomposes into:
+- Domain 1: AI avatar / talking head platforms
+- Domain 2: AI voice synthesis tools
+- Domain 3: AI video generation for B-roll
+- Domain 4: Lip sync & face animation
+- Domain 5: Workflow orchestration & pipeline tools
+- Domain 6: Cost & throughput analysis
+
+Present the domains to the user briefly before dispatching: "Researching across 5 domains: [list]. Dispatching agents now."
+
+#### Step 2: Dispatch Specialist Agents in Parallel
+
+For each domain, dispatch a `general-purpose` subagent with `model: "sonnet"`:
+
+```
+Task(
+  subagent_type="general-purpose",
+  model="sonnet",
+  run_in_background=true,
+  prompt="""
+You are a specialist researcher investigating: {DOMAIN_DESCRIPTION}
+
+Research question context: {USER_QUERY}
+
+Use WebSearch, firecrawl_search, and firecrawl_scrape to find current, specific data.
+Focus on: product names, pricing, capabilities, limitations, comparisons, and real user experiences.
+Cite sources with dates. Prefer 2025-2026 data.
+
+Produce a structured markdown section titled "## {DOMAIN_NAME}" with:
+- Key findings (specific products, features, pricing)
+- Comparison tables where applicable
+- Current limitations and workarounds
+- Recommendations within this domain
+
+Today's date: {TODAY_DATE}
+"""
+)
+```
+
+All agents run concurrently. Dispatch them all in a single message.
+
+#### Step 3: Extract Specialist Outputs from JSONL
+
+After all agents complete, extract their research text from the JSONL transcript files:
+
+```bash
+mkdir -p /tmp/deep-extracts && python3 -c "
+import json, os
+
+agents = {
+    'domain1': '{AGENT1_ID}',
+    'domain2': '{AGENT2_ID}',
+    'domain3': '{AGENT3_ID}',
+    'domain4': '{AGENT4_ID}',
+    # ... add more as needed
+}
+
+base_path = # use the actual task output directory from agent notifications
+
+for name, agent_id in agents.items():
+    filepath = f'{base_path}/{agent_id}.output'
+    best_text = ''
+    try:
+        with open(filepath, 'r', errors='replace') as f:
+            for line in f:
+                line = line.strip()
+                if not line: continue
+                try:
+                    obj = json.loads(line)
+                    msg = obj.get('message', {})
+                    if msg.get('role') == 'assistant':
+                        content = msg.get('content', [])
+                        if isinstance(content, list):
+                            for block in content:
+                                if isinstance(block, dict) and block.get('type') == 'text':
+                                    text = block.get('text', '')
+                                    if len(text) > len(best_text):
+                                        best_text = text
+                except: pass
+        outpath = f'/tmp/deep-extracts/{name}.md'
+        with open(outpath, 'w') as f:
+            f.write(best_text)
+        print(f'{name}: {len(best_text)} chars')
+    except Exception as e:
+        print(f'{name}: ERROR - {e}')
+"
+```
+
+#### Step 4: Synthesize with Gemini via LiteLLM
+
+Concatenate all extracted specialist outputs into a single context file, then send to Gemini for synthesis:
+
+```bash
+# Concatenate all specialist outputs
+cat /tmp/deep-extracts/domain*.md > /tmp/deep-extracts/all_specialist_outputs.md
+
+# Send to Gemini for synthesis
+python3 /Users/craigverzosa/.claude/skills/deep-research/scripts/research.py \
+  -q "Synthesize the following specialist research into a comprehensive, actionable report. Cross-reference findings across domains for agreements and contradictions. Produce: (1) an executive summary with the top recommendation, (2) a detailed comparison matrix, (3) a recommended workflow/pipeline, (4) cost analysis, (5) current limitations and workarounds. Original question: {USER_QUERY}" \
+  -c /tmp/deep-extracts/all_specialist_outputs.md \
+  -o ~/Documents/ObsidianNotes/Claude-Research/{OUTPUT_FILENAME}.md \
+  --max-tokens 16000
+```
+
+Gemini's large context window handles all specialist outputs in a single call — no timeout risk, no subagent turn limits.
+
+#### Step 5: Enhance and Write to Obsidian
+
+After Gemini returns the synthesis:
+1. Read the output file
+2. Prepend YAML frontmatter with `deep_mode: true` tag
+3. Add wiki-links for cross-referencing
+4. Report key findings to the user conversationally
+
+#### Fallback
+
+If Gemini synthesis fails (API error, rate limit), fall back to synthesizing directly in the main conversation window by reading all extracted specialist files and writing the report manually.
+
+---
+
 ## Research Patterns
 
 See [references/research-patterns.md](references/research-patterns.md) for detailed prompt patterns and multi-source workflows.

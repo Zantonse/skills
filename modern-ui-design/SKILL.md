@@ -13,37 +13,36 @@ This skill is the **research phase** — run it before `/frontend-design`:
 
 ## Workflow
 
-1. Read [references/research-areas.md](references/research-areas.md) for search targets and extraction schemas
-2. Dispatch 4 parallel subagents (one per research area) using the Task tool
-3. Synthesize findings into a design brief
-4. Save brief to project AND summarize in conversation
+1. Determine context (project-specific or general research)
+2. Read [references/research-areas.md](references/research-areas.md) for search queries per area
+3. Dispatch 4 parallel subagents using the Task tool
+4. Synthesize findings into a design brief
+5. Save to Obsidian vault (if configured in CLAUDE.md) AND project, then summarize in conversation
 
 ### Step 1: Determine Context
 
-Before researching, understand the project:
-- What is being built? (app type, audience, purpose)
-- Any existing design direction or constraints?
-- Specific areas of interest? (default: all four areas)
+Two modes:
+- **Project-specific:** Tailor search queries to the project type. A fintech dashboard needs different trends than a creative portfolio.
+- **General research:** Run all four areas broadly to build a reusable knowledge base.
 
-Use this context to tailor search queries — a fintech dashboard needs different trends than a creative portfolio.
+If the user hasn't specified a project, ask briefly or default to general research.
 
 ### Step 2: Dispatch Research Subagents
 
-Launch 4 parallel Task subagents (subagent_type: "general-purpose", model: "sonnet"). Each agent uses Firecrawl tools for research.
+Launch 4 parallel Task subagents (subagent_type: "general-purpose", model: "sonnet").
 
-**Agent research strategy (each agent follows this):**
-1. **Search** with `firecrawl_search` using queries from references/research-areas.md (limit: 5 results per query, no scrapeOptions — search first, scrape after)
-2. **Identify** the 2-3 most relevant result URLs from search
-3. **Scrape** those URLs with `firecrawl_scrape` using JSON format + the extraction schema from references/research-areas.md to pull structured data
-4. **Fallback**: If scrape returns empty (JS-rendered), retry with `waitFor: 5000`. If still empty, use `firecrawl_map` to find the correct subpage, then scrape that.
+Each agent prompt should include:
+1. The search queries from references/research-areas.md for their research area
+2. Explicit instruction to use `firecrawl_search` with `limit: 5` per query
+3. Instruction to pick the 2-3 best URLs from results and scrape them with `firecrawl_scrape` using `formats: ["markdown"]` and `onlyMainContent: true`
+4. The specific extract targets from references/research-areas.md (what data to pull from pages)
+5. Project context (if any)
+6. Current year for relevance filtering
+7. Instruction to return structured markdown with actionable findings and source URLs
 
-**Agent prompts must include:**
-- The specific research area, search queries, AND JSON extraction schema from references/research-areas.md
-- The project context (what is being built)
-- Instruction to use `firecrawl_search` for discovery, then `firecrawl_scrape` with JSON schema for extraction
-- Instruction to return findings as structured markdown with specific, actionable items
-- Instruction to include source URLs for key findings
-- Current year context (for relevance filtering)
+**Why markdown scraping instead of JSON extraction:** In practice, subagents get richer results scraping full articles as markdown and extracting findings themselves than trying to use firecrawl_scrape's JSON schema extraction — design articles are narrative, not structured data. The JSON schemas in references/research-areas.md serve as a reference for what fields to extract, not as literal firecrawl parameters.
+
+**Fallback chain:** If scrape returns empty, retry with `waitFor: 5000`. If still empty, use `firecrawl_map` to find the correct subpage.
 
 **The 4 agents:**
 1. **Visual Trends** — color, typography, spacing, animation, texture
@@ -53,56 +52,62 @@ Launch 4 parallel Task subagents (subagent_type: "general-purpose", model: "sonn
 
 ### Step 3: Synthesize Design Brief
 
-Combine all 4 agents' findings into a single design brief. Use this structure:
+Combine all 4 agents' findings into a single design brief using this structure:
 
 ```markdown
+---
+date: [today]
+tags: [design, ui-trends, css, typography, color, research]
+source: claude-code
+project: [project name or "general"]
+---
+
 # UI Design Research Brief
 Generated: [date]
-Project context: [what is being built]
+Project context: [what is being built, or "general research"]
 
 ## Executive Summary
-[3-5 bullet points: the most impactful findings for THIS project]
+[3-5 bullet points: the most impactful findings]
 
 ## Visual Direction
-### Recommended Approach
-[Specific recommendations tailored to the project, drawing from visual trends research]
 ### Color Strategy
-[Specific palettes or approaches, NOT generic advice]
+[Specific palettes in OKLCH where possible, NOT generic advice]
 ### Typography
-[Specific font recommendations or pairing strategies]
+[Specific font pairings with rationale]
 ### Motion & Animation
-[Specific techniques appropriate for the project]
+[Specific CSS techniques with code snippets]
 
 ## Component Strategy
 ### Layout
-[Specific layout patterns suited to this project]
+[Specific patterns with CSS examples]
 ### Key Components
-[Component patterns that would elevate this project]
+[Patterns that elevate the project]
 ### Interaction Patterns
-[Micro-interactions and UX patterns to consider]
+[Micro-interactions with implementation notes]
 
 ## Anti-Pattern Checklist
-[Specific things to AVOID — the "AI slop" markers to watch for]
-- [ ] Generic font (Inter, Roboto, system default)
-- [ ] Purple gradient on white
-- [ ] Identical card grids with uniform padding
-- [ ] [additional items from research]
+[Checkbox list of AI-generated UI markers to avoid]
 
 ## CSS Techniques to Use
-[Modern CSS features that are production-ready and relevant]
+[Table: feature | replaces | example code]
 
 ## Sources
-[Key URLs referenced during research]
+[URLs referenced]
 ```
+
+Include YAML frontmatter so the brief works as an Obsidian note (with date, tags, source fields).
 
 ### Step 4: Save and Summarize
 
-1. Save the design brief to the project: `.planning/design-brief.md` (if using GSD) or `design-brief.md` (project root)
-2. Summarize the top 5-8 actionable findings in conversation so the next skill (/frontend-design) or implementation step can use them immediately
+Save the design brief to **all applicable locations:**
+1. **Obsidian vault** (if configured in CLAUDE.md): write to the vault's Claude-Research/Design/ folder
+2. **Project**: `.planning/design-brief.md` (if using GSD) or `design-brief.md` (project root)
+3. **Conversation**: Summarize the top 5-8 actionable findings so the next skill can use them immediately
 
 ## Notes
 
 - Always use `model: "sonnet"` for subagents
 - Research should focus on what is **current and production-ready**, not experimental
-- Prefer findings with concrete examples over abstract trend descriptions
+- Prefer findings with concrete examples (code snippets, font names, hex/oklch values) over abstract trend descriptions
 - If a research area returns thin results, broaden search queries rather than padding with generic advice
+- A full run takes 2-4 minutes with all 4 agents in parallel
