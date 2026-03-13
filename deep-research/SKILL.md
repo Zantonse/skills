@@ -47,13 +47,31 @@ curl -s https://example.com/about | python3 scripts/research.py -q "Analyze this
 
 ## Best Results Pattern
 
-For the deepest research, **gather context first** before calling the script:
+For the deepest research, **gather context first** before calling the script. The firecrawl CLI is the preferred tool — it returns clean LLM-optimized markdown and handles JS-rendered pages.
 
-1. Use `WebSearch` or `firecrawl_search` to find relevant pages
-2. Use `firecrawl_scrape` or `WebFetch` to get full page content
-3. Save scraped content to temp files
-4. Pass all context files with `-c` flag
+1. **Search + scrape in one shot** (preferred):
+   ```bash
+   firecrawl search "your query" --scrape --limit 5 -o .firecrawl/results.json --json
+   ```
+   The `--scrape` flag fetches full page content for each result — no separate scrape step needed.
+
+2. **Scrape a specific URL**:
+   ```bash
+   firecrawl scrape "https://example.com/page" -o .firecrawl/page.md
+   ```
+
+3. **Parallel scrapes** for multiple known URLs:
+   ```bash
+   firecrawl scrape "url1" -o .firecrawl/1.md &
+   firecrawl scrape "url2" -o .firecrawl/2.md &
+   firecrawl scrape "url3" -o .firecrawl/3.md &
+   wait
+   ```
+
+4. **Pass all context files** to Gemini with `-c` flag
 5. The more context Gemini has, the better the synthesis
+
+**Fallback**: If firecrawl is unavailable (not installed, out of credits), use `WebSearch` for discovery and `WebFetch` for specific URLs.
 
 Gemini 3.1 Pro has a massive context window — feed it everything relevant.
 
@@ -134,11 +152,13 @@ Deep mode activates when the user's message contains:
 - "thorough deep dive [topic]"
 - "comprehensive research [topic]"
 
-Deep mode uses **parallel specialist agents** for web research, then **Gemini for synthesis** — combining Claude's web scraping capabilities with Gemini's large context window for cross-referencing.
+Deep mode uses **parallel specialist agents** for web research, then **Gemini for synthesis** — combining Claude's web scraping capabilities with Gemini's large context window for cross-referencing. This is a hybrid approach inspired by how the major platforms do deep research (see [Design Rationale](#design-rationale) at the bottom).
 
 ### How It Works
 
-#### Step 1: Decompose the Question into Research Domains
+#### Step 0: Generate Research Plan (show before dispatching)
+
+Before dispatching agents, decompose the question and present the plan to the user. This is inspired by how Gemini Deep Research works — showing the plan before executing lets the user redirect strategy before expensive retrieval operations begin.
 
 Break the user's question into 4-6 independent research domains. Each domain becomes a specialist agent. For example, "best AI video creation tools for realistic 15-minute videos" decomposes into:
 - Domain 1: AI avatar / talking head platforms
@@ -148,9 +168,22 @@ Break the user's question into 4-6 independent research domains. Each domain bec
 - Domain 5: Workflow orchestration & pipeline tools
 - Domain 6: Cost & throughput analysis
 
-Present the domains to the user briefly before dispatching: "Researching across 5 domains: [list]. Dispatching agents now."
+Present the plan to the user:
+```
+Researching across 6 domains:
+1. AI avatar / talking head platforms
+2. AI voice synthesis tools
+3. AI video generation for B-roll
+4. Lip sync & face animation
+5. Workflow orchestration & pipeline tools
+6. Cost & throughput analysis
 
-#### Step 2: Dispatch Specialist Agents in Parallel
+Dispatching specialist agents now. (Reply to adjust domains before results come in.)
+```
+
+Then proceed immediately — don't block on user confirmation. If the user responds with adjustments before agents finish, incorporate them in a second-pass round.
+
+#### Step 1: Dispatch Specialist Agents in Parallel
 
 For each domain, dispatch a `general-purpose` subagent with `model: "sonnet"`:
 
@@ -164,15 +197,71 @@ You are a specialist researcher investigating: {DOMAIN_DESCRIPTION}
 
 Research question context: {USER_QUERY}
 
-Use WebSearch, firecrawl_search, and firecrawl_scrape to find current, specific data.
-Focus on: product names, pricing, capabilities, limitations, comparisons, and real user experiences.
-Cite sources with dates. Prefer 2025-2026 data.
+## Search Strategy (use firecrawl CLI via Bash tool)
+
+Your PRIMARY search tool is the firecrawl CLI, run via the Bash tool. It returns clean
+markdown and handles JS-rendered pages. Use this escalation pattern:
+
+1. **Search + scrape** (start here for any new topic):
+   ```
+   firecrawl search "your search query" --scrape --limit 3 -o /tmp/deep-research/{DOMAIN_SLUG}-search.json --json
+   ```
+   This searches AND fetches full page content in one call. Parse results with:
+   ```
+   jq -r '.data.web[] | "## " + .title + "\nURL: " + .url + "\n" + .description' /tmp/deep-research/{DOMAIN_SLUG}-search.json
+   ```
+
+2. **Scrape a specific URL** (when you find a promising page):
+   ```
+   firecrawl scrape "https://exact-url.com/page" -o /tmp/deep-research/{DOMAIN_SLUG}-page.md
+   ```
+   Then read the output file to extract findings.
+
+3. **Parallel scrapes** (when you have multiple URLs to check):
+   ```
+   firecrawl scrape "url1" -o /tmp/deep-research/page1.md &
+   firecrawl scrape "url2" -o /tmp/deep-research/page2.md &
+   wait
+   ```
+
+**Fallbacks** (if firecrawl is unavailable or fails):
+- Use `litellm_web_search` (WebSearch tool) for discovery — returns snippets, not full pages
+- Use `WebFetch` only for specific known URLs (not for guessed URLs)
+- If WebFetch fails (401, 404), do NOT retry — move on or use training knowledge
+
+Create the output directory first: `mkdir -p /tmp/deep-research`
+
+## What to Research
+
+Find current, specific data: product names, pricing, capabilities, limitations,
+comparisons, and real user experiences. Prefer 2025-2026 data.
+
+## Output Requirements
 
 Produce a structured markdown section titled "## {DOMAIN_NAME}" with:
-- Key findings (specific products, features, pricing)
+- Key findings with specific sources and publication dates
 - Comparison tables where applicable
 - Current limitations and workarounds
 - Recommendations within this domain
+
+## Conflict Handling
+
+When sources disagree, report BOTH views with attribution rather than picking a winner.
+Flag the disagreement explicitly: "Source A (date) states X, while Source B (date) states Y."
+Weight peer-reviewed or institutional sources (.gov, .edu, journals) over blogs and opinion
+pieces, but still surface the dissenting view.
+
+## Saturation
+
+Stop searching for a sub-topic when:
+- You have 3+ corroborating sources for a claim
+- New searches return information you've already captured
+- You've covered the core dimensions (what, who, how much, limitations)
+
+## Length Constraint
+
+Keep total output under 12,000 characters. Be specific and data-rich, not verbose.
+Truncate background context in favor of concrete findings.
 
 Today's date: {TODAY_DATE}
 """
@@ -181,9 +270,9 @@ Today's date: {TODAY_DATE}
 
 All agents run concurrently. Dispatch them all in a single message.
 
-#### Step 3: Extract Specialist Outputs from JSONL
+#### Step 2: Extract Specialist Outputs from JSONL
 
-After all agents complete, extract their research text from the JSONL transcript files:
+After all agents complete, extract their research text from the JSONL transcript files. Agents may hit the 32K output token limit and restart, producing multiple text blocks — the extraction must capture ALL of them, not just the longest one.
 
 ```bash
 mkdir -p /tmp/deep-extracts && python3 -c "
@@ -201,7 +290,7 @@ base_path = # use the actual task output directory from agent notifications
 
 for name, agent_id in agents.items():
     filepath = f'{base_path}/{agent_id}.output'
-    best_text = ''
+    all_texts = []
     try:
         with open(filepath, 'r', errors='replace') as f:
             for line in f:
@@ -216,17 +305,53 @@ for name, agent_id in agents.items():
                             for block in content:
                                 if isinstance(block, dict) and block.get('type') == 'text':
                                     text = block.get('text', '')
-                                    if len(text) > len(best_text):
-                                        best_text = text
+                                    if len(text) > 200:
+                                        all_texts.append(text)
                 except: pass
+        # Concatenate all qualifying text blocks, separated by dividers
+        combined = '\n\n---\n\n'.join(all_texts)
         outpath = f'/tmp/deep-extracts/{name}.md'
         with open(outpath, 'w') as f:
-            f.write(best_text)
-        print(f'{name}: {len(best_text)} chars')
+            f.write(combined)
+        print(f'{name}: {len(combined)} chars from {len(all_texts)} blocks')
     except Exception as e:
         print(f'{name}: ERROR - {e}')
 "
 ```
+
+#### Step 3: Coverage Gap Check (adaptive second pass)
+
+Before synthesis, verify each domain produced substantive results. This is inspired by how Gemini checks coverage against its research plan — if a sub-topic is under-covered, it runs additional searches before synthesizing.
+
+```bash
+# Check which domains have thin or failed results
+python3 -c "
+import os
+thin = []
+for f in sorted(os.listdir('/tmp/deep-extracts')):
+    if not f.endswith('.md'): continue
+    path = os.path.join('/tmp/deep-extracts', f)
+    size = os.path.getsize(path)
+    domain = f.replace('.md','')
+    if size < 1000:
+        thin.append(domain)
+        print(f'THIN: {domain} ({size} chars)')
+    else:
+        print(f'OK:   {domain} ({size} chars)')
+if thin:
+    print(f'\nDomains needing second pass: {thin}')
+else:
+    print(f'\nAll domains have sufficient coverage.')
+"
+```
+
+If any domains returned thin results (<1000 chars), dispatch a **second-pass agent** for each, using different search terms and a more focused prompt. These second-pass agents should:
+- Use broader/alternative search terms
+- Try different angles on the same topic
+- Fall back to training knowledge if web search continues to fail
+- Target the specific gaps rather than re-researching the whole domain
+
+After second-pass agents complete, re-extract and merge their outputs into the existing domain files.
 
 #### Step 4: Synthesize with Gemini via LiteLLM
 
@@ -234,11 +359,26 @@ Concatenate all extracted specialist outputs into a single context file, then se
 
 ```bash
 # Concatenate all specialist outputs
-cat /tmp/deep-extracts/domain*.md > /tmp/deep-extracts/all_specialist_outputs.md
+cat /tmp/deep-extracts/*.md > /tmp/deep-extracts/all_specialist_outputs.md
 
 # Send to Gemini for synthesis
 python3 /Users/craigverzosa/.claude/skills/deep-research/scripts/research.py \
-  -q "Synthesize the following specialist research into a comprehensive, actionable report. Cross-reference findings across domains for agreements and contradictions. Produce: (1) an executive summary with the top recommendation, (2) a detailed comparison matrix, (3) a recommended workflow/pipeline, (4) cost analysis, (5) current limitations and workarounds. Original question: {USER_QUERY}" \
+  -q "Synthesize the following specialist research into a comprehensive, actionable report.
+
+SYNTHESIS INSTRUCTIONS:
+1. Cross-reference findings across domains — identify where specialists AGREE and where they CONTRADICT each other
+2. When sources disagree, present both perspectives with source attribution. Do not silently pick a winner
+3. Weight peer-reviewed and institutional sources over blogs and opinion pieces
+4. Flag temporal conflicts — if an older source says X but a newer source says Y, note the timeline
+5. Produce the following sections:
+   (a) Executive summary with the top 3 findings
+   (b) Detailed findings organized by theme (not by domain — reorganize around insights)
+   (c) Comparison matrix where applicable
+   (d) Recommended approach / workflow / pipeline
+   (e) Current limitations and open questions
+   (f) Sources cited (with dates where available)
+
+Original question: {USER_QUERY}" \
   -c /tmp/deep-extracts/all_specialist_outputs.md \
   -o ~/Documents/ObsidianNotes/Claude-Research/{OUTPUT_FILENAME}.md \
   --max-tokens 16000
@@ -257,6 +397,45 @@ After Gemini returns the synthesis:
 #### Fallback
 
 If Gemini synthesis fails (API error, rate limit), fall back to synthesizing directly in the main conversation window by reading all extracted specialist files and writing the report manually.
+
+---
+
+## Design Rationale
+
+This skill's deep mode is a hybrid architecture informed by how the major AI platforms implement deep research. Understanding these design choices helps explain why the skill works the way it does.
+
+### How the Platforms Do It
+
+| Dimension | OpenAI Deep Research | Gemini Deep Research | Perplexity Deep Research | Claude Research |
+|---|---|---|---|---|
+| **Model** | o3 (reasoning model) | Gemini 2.5 Pro / 3.1 Pro | Internal models | Claude Opus/Sonnet |
+| **Architecture** | Single-agent, inline reasoning | Hierarchical agent, plan-first | Fully reactive loop | Tool-calling loop |
+| **Query approach** | CoT decomposes inline | Explicit plan shown to user | No plan, iterative passes | Context-driven tool calls |
+| **Search backend** | Bing + web browsing | Google Search | Proprietary index | Bing / third-party |
+| **Breadth vs depth** | Depth-adaptive | Breadth-first (plan-driven) | Depth-first by default | Context-window managed |
+| **Conflict handling** | Surfaces contradictions | Synthesis-dominant | Explicit when stark | Synthesis-dominant |
+| **Stopping criteria** | Time/compute budget (5-30 min) | Plan completion | Search budget (dozens of queries) | Tool-call budget |
+| **RAG pattern** | Iterative self-RAG | Hierarchical RAG | Fusion + iterative RAG | Iterative RAG |
+| **Plan visibility** | Internal (reasoning trace) | External (user approval) | None | None |
+
+### Why This Skill Uses a Hybrid Approach
+
+**Multi-agent parallel decomposition** (like Anthropic's own multi-agent research system) gives breadth — each domain gets its own specialist agent that can search independently without competing for context window space.
+
+**Research plan display** (borrowed from Gemini) gives the user control over the decomposition before expensive agent work begins.
+
+**Adaptive coverage detection** (inspired by Gemini's plan-completion stopping and Perplexity's multi-pass approach) catches domains where agents failed or returned thin results, triggering a focused second pass.
+
+**Gemini synthesis** (our unique addition) uses Gemini's massive context window to cross-reference all specialist outputs in a single pass — something no single Claude agent could do within its context limits. This is the "fusion RAG" step that Perplexity does internally.
+
+**Conflict-aware synthesis prompts** (inspired by OpenAI's explicit contradiction surfacing) ensure the final report doesn't silently pick winners when sources disagree.
+
+### Key Lessons from the Research
+
+1. **Firecrawl CLI as primary search tool**: Agents use `firecrawl search --scrape` via Bash for source discovery — it returns clean LLM-optimized markdown and handles JS-rendered pages, bypassing the WebFetch haiku dependency entirely. `litellm_web_search` is the fallback if firecrawl is unavailable. WebFetch is last resort for specific known URLs only.
+2. **Extraction must handle token-limit restarts**: Agents that hit the 32K output limit restart and produce multiple text blocks. The extraction script must concatenate all blocks (>200 chars), not just take the longest one.
+3. **Budget-based stopping is fragile**: Systems that stop based on a compute budget may halt while under-informed. The coverage gap check (Step 3) compensates by detecting thin results and triggering second-pass agents.
+4. **No system truly solves contradiction handling**: All platforms struggle with conflicting sources. Explicitly instructing the synthesis model to surface disagreements (rather than silently resolving them) produces more trustworthy output.
 
 ---
 
