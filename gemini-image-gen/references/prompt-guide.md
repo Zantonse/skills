@@ -1,196 +1,222 @@
 # Gemini Image Generation — Prompt Engineering Guide
 
+## The #1 Rule: Natural Language Over Tag Soup
+
+Gemini's image models understand intent, physics, and composition. They reward clear creative direction over keyword lists.
+
+**BAD (tag soup):** `"dog, park, sunset, 4k, realistic, cinematic"`
+
+**GOOD (creative direction):** `"A golden retriever bounding through a sun-dappled park at golden hour, shot from a low angle with shallow depth of field"`
+
+Write as if briefing a human photographer or artist. Describe what the camera sees.
+
 ## Prompt Structure
 
-Effective prompts follow this pattern:
+Build prompts from these elements (not all required — use what's relevant):
 
 ```
-[Subject] + [Style/Medium] + [Composition] + [Lighting/Mood] + [Color Palette] + [Quality Modifiers]
+[Style/medium] of [specific subject with details] in [setting/environment],
+[action or pose], [lighting description], [mood/atmosphere],
+[camera angle/composition], [additional details: texture, color palette, materiality].
+[Purpose context if relevant.]
 ```
 
-## Style Keywords
+## Key Vocabularies
 
-| Category | Keywords |
-|----------|----------|
-| **Photorealistic** | photorealistic, DSLR photo, professional photography, 8K, sharp focus |
-| **Illustration** | vector illustration, flat design, hand-drawn, watercolor, ink sketch |
-| **Corporate/UI** | clean, minimal, professional, corporate, modern UI, flat icon |
-| **Luxury/Premium** | elegant, refined, luxury, premium, sophisticated, haute couture |
-| **Abstract** | abstract, geometric, gradient mesh, fluid shapes, generative art |
-| **SaaS/Editorial** | premium SaaS, clean modern, soft gradients, light background, editorial |
+### Camera Language
+Use cinematic terms the model understands:
+- **Framing:** wide establishing shot, medium close-up, extreme close-up, over-the-shoulder, bird's eye view, worm's eye view, Dutch angle
+- **Lens:** shallow depth of field, bokeh, macro, telephoto compression, fisheye distortion, tilt-shift
+- **Film:** 35mm film grain, Kodak Portra tones, Fuji Velvia saturation, cross-processed
+
+### Lighting
+Be specific about how light behaves:
+- **Direction:** backlit with rim light, soft window light from the left, dramatic side-lighting
+- **Named techniques:** Rembrandt lighting, butterfly lighting, chiaroscuro, clamshell lighting
+- **Quality:** soft diffused, harsh directional, golden hour warmth, cool blue hour, neon-lit
+- **Atmospheric:** volumetric fog with light rays, dappled light through leaves, studio strobes with softbox
+
+### Materials and Texture
+The model produces better results when you name physical materials:
+- **Metals:** brushed aluminum, polished brass, hammered copper, matte black anodized
+- **Fabrics:** hand-knit wool, soft velvet, crisp linen, weathered leather, raw silk
+- **Surfaces:** cracked clay, translucent glass, wet stone, oxidized patina, frosted acrylic
+- **Natural:** sun-bleached driftwood, moss-covered bark, volcanic rock, sea-polished pebbles
+
+### Color Direction
+Guide the palette rather than specifying hex codes (for hex, see Web UI section):
+- **Palettes:** muted earth tones, high-contrast complementary, monochromatic blue, warm terracotta and sage
+- **Techniques:** desaturated pastels, rich jewel tones, black and white with selective color
+- **Mood through color:** warm amber candlelight glow, cool steel-blue twilight, vibrant tropical sunset
+
+## Specificity Matters
+
+Vague subjects produce generic images. Add materiality, context, and detail:
+
+| Vague | Specific |
+|-------|---------|
+| "a woman" | "a sophisticated elderly woman wearing a vintage Chanel-style tweed suit" |
+| "a building" | "a brutalist concrete apartment block with laundry lines strung between balconies" |
+| "a coffee cup" | "a handmade ceramic coffee cup with an uneven clay glaze, steam curling upward" |
+
+## Context About Purpose
+
+Mentioning the use case helps the model infer appropriate composition, lighting, and quality:
+- "Create a hero image for a premium coffee brand's website" — infers professional lighting, editorial framing
+- "Design a poster for a jazz concert" — infers bold typography, moody atmosphere
+- "Make a social media thumbnail for a cooking channel" — infers bright, appetizing, centered composition
+
+## Edit, Don't Re-Roll
+
+When a generated image is mostly correct, request specific conversational changes rather than starting over:
+- "Change the sunny day to a rainy night"
+- "Remove the person in the background and add a potted plant"
+- "Make the lighting warmer and add more shadow on the left"
+
+The model adjusts lighting, reflections, and physics automatically when editing.
+
+## Reference Images & Consistency
+
+Gemini supports multi-image context for visual consistency:
+- **Up to 5 consistent characters** per workflow
+- **Up to 14 consistent objects** per workflow
+- Instruct with: "Use the uploaded image as a strict style reference"
+- For character consistency: "Keep facial features exactly the same as the reference"
+- For storyboarding: "The identity and attire of all characters must stay consistent throughout"
+
+## Text in Images
+
+Gemini has strong text rendering. Always put exact text in quotation marks:
+- `with the text "MIDNIGHT REVERIE" in bold art deco typography`
+- Specify style: "bold sans-serif," "handwritten script," "retro neon sign"
+- For localization: "Translate the text in this image to Japanese"
+
+Note: exact text rendering is improved but not pixel-perfect. For production text, use SVG/CSS.
+
+## Anti-Patterns to Avoid
+
+| Anti-Pattern | Problem | Fix |
+|-------------|---------|-----|
+| Tag soup | `"dog, park, sunset, 4k"` — keyword lists lack creative direction | Write natural sentences describing the scene |
+| Vague subjects | "a person" or "a building" — too generic | Add specific details, materials, context |
+| Missing mood/lighting | Dramatically affects output quality | Always include lighting and atmosphere |
+| No purpose context | Model can't infer appropriate style | Mention the use case when relevant |
+| Over-prompting | Contradictory or excessive details confuse the model | Keep prompts coherent and focused |
+| Abstract adjectives alone | "elegant" or "luxurious" without a noun | Pair with specifics: "elegant serif calligraphy" |
+
+## Example Prompts
+
+### Product Photography
+> A flat lay of artisanal coffee beans spilling from a matte black ceramic cup onto a weathered oak table, soft directional window light from the upper left, warm earth tones with deep shadows, shot from directly above, styled for a premium coffee brand's Instagram feed.
+
+### Portrait
+> A cinematic medium close-up portrait of a jazz musician mid-performance, eyes closed, sweat glistening under warm amber stage lighting, shallow depth of field with bokeh from string lights in the background, shot on what looks like 35mm film with natural grain.
+
+### Text-Heavy Design
+> A vintage-style concert poster with the text "MIDNIGHT REVERIE" in bold art deco typography at the top, a silhouette of a saxophone player against a deep indigo night sky with a full moon, "Live at The Blue Note — March 15, 2026" in smaller elegant serif type at the bottom, gold and navy color palette.
+
+### Fantasy Illustration
+> A lush watercolor illustration of a hidden forest library, towering bookshelves made from living trees with glowing mushrooms as reading lamps, a cozy armchair draped in moss-green velvet, shafts of golden sunlight filtering through the canopy above, whimsical and enchanting atmosphere.
+
+### Icon/UI Asset
+> A minimalist 3D-rendered shield icon, polished gold surface with subtle reflections, clean geometric form, soft gradient shadow on white background, product photography lighting, centered composition.
+
+---
 
 ## Web UI Asset Presets
 
-### Hero Backgrounds (Full-width banner images)
-```
-Prompt: "Premium SaaS hero background, soft light refractions through layered
-translucent [PRIMARY_COLOR] surfaces, clean modern abstract, horizontal wide
-format, light background fading to white at edges, no text, no icons, macro
-photography style"
-Aspect: 16:9
-Size: 2K
-```
+For generating consistent assets for Vercel/Next.js sites.
 
-### Section Backgrounds (Subtle textures behind content sections)
-```
-Prompt: "Extremely subtle abstract texture, very faint [COLOR] geometric
-pattern dissolving into white, premium SaaS style, barely visible, clean
-modern, no text, horizontal format, macro photography of frosted glass"
-Aspect: 16:9
-Size: 1K
-```
-
-### Card Header Images (Module/feature cards)
-```
-Prompt: "Abstract premium card illustration, flowing [COLOR] light refractions
-with [METAPHOR] forms, soft gradients, clean modern SaaS style, horizontal
-card composition, no text, no icons, light background, macro photography
-of [MATERIAL]"
-Aspect: 2:1
-Size: 1K
-```
-
-### Wide Banners (Page headers, module index banners)
-```
-Prompt: "Wide panoramic abstract premium banner, [COLOR] [PATTERN_DESCRIPTION],
-soft gradients, clean modern SaaS style, no text, no icons, light background,
-ultra-wide horizontal composition"
-Aspect: 4:1
-Size: 2K
-```
-
-### Small Icons (Sidebar, navigation, features)
-```
-Prompt: "Tiny minimalist abstract icon, soft [COLOR] gradient, simple geometric
-[SHAPE] form, clean modern premium, no text, centered on white background,
-product photography"
-Aspect: 1:1
-Size: 512px
-```
-
-### Lesson/Page Header Strips (Thin atmospheric banners)
-```
-Prompt: "Thin atmospheric horizontal banner, soft [COLOR] [VISUAL_ELEMENT],
-abstract, premium SaaS style, no text, macro photography of [MATERIAL]"
-Aspect: 8:1
-Size: 1K
-```
-
-### Navigation Thumbnails (Small preview images)
-```
-Prompt: "Small thumbnail, soft [COLOR] [VISUAL], clean modern, no text,
-product photography of [MATERIAL], square crop"
-Aspect: 1:1
-Size: 512px
-```
-
-### Value Proposition Icons (Feature/benefit icons)
-```
-Prompt: "Premium abstract icon, [VISUAL_METAPHOR], soft [COLOR] gradient
-background fading to white, 3D glass morphism style, clean modern, no text,
-centered composition, product photography"
-Aspect: 1:1
-Size: 1K
-```
-
-### Reference Card Headers (Documentation/resource cards)
-```
-Prompt: "Premium card header illustration, abstract [CONCEPTUAL_FORM],
-soft neutral gradient, clean modern SaaS style, no text, horizontal composition,
-macro photography of [MATERIAL]"
-Aspect: 2:1
-Size: 1K
-```
-
-### Interactive Exercise Textures (Subtle card backgrounds)
-```
-Prompt: "Extremely subtle abstract texture strip, barely visible soft [COLOR]
-gradient pattern, premium SaaS background texture, very faint, no text,
-horizontal thin band, macro photography of frosted [COLOR] glass surface"
-Aspect: 8:1
-Size: 1K
-```
-
-## Building a Consistent Vercel Site Manifest
-
-When generating assets for a full website, follow this workflow:
-
+### Workflow
 1. **Define your color palette** — Pick 2-5 accent colors with hex codes
-2. **Choose a visual material** — Pick one material family for consistency (e.g., "crystal", "glass", "marble", "light refractions")
-3. **Write a base style prefix** — Share across all prompts: `"premium SaaS, clean, abstract, soft gradients, light background, no text"`
-4. **Generate by category** — Use the presets above, substituting your colors and material
-5. **Module/section colors** — Give each section its own accent color for visual hierarchy
-6. **Dark mode consideration** — Use CSS `filter: brightness(0.7) saturate(0.9)` for dark mode instead of generating separate images
+2. **Choose a visual material** — One material family for consistency (crystal, glass, marble, light refractions)
+3. **Write a base style prefix** — Share across all prompts
+4. **Generate by category** — Use presets below, substituting your colors and material
 
-### Example Manifest Structure for a Vercel Site
+### Hero Backgrounds (16:9, 2K)
+```
+A premium SaaS hero background with soft light refractions through layered
+translucent [PRIMARY_COLOR] surfaces, clean modern abstract composition,
+wide horizontal format, light background fading to white at edges, macro
+photography style, no text, no icons
+```
 
+### Section Backgrounds (16:9, 1K)
+```
+An extremely subtle abstract texture, very faint [COLOR] geometric pattern
+dissolving into white, premium SaaS style, barely visible, clean modern,
+horizontal format, macro photography of frosted glass surface, no text
+```
+
+### Card Headers (2:1, 1K)
+```
+An abstract premium card illustration with flowing [COLOR] light refractions
+and [METAPHOR] forms, soft gradients, clean modern SaaS style, horizontal
+card composition, light background, macro photography of [MATERIAL], no text
+```
+
+### Wide Banners (4:1, 2K)
+```
+A wide panoramic abstract premium banner with [COLOR] [PATTERN_DESCRIPTION],
+soft gradients, clean modern SaaS style, ultra-wide horizontal composition,
+light background, no text, no icons
+```
+
+### Icons (1:1, 512px)
+```
+A tiny minimalist abstract icon, soft [COLOR] gradient forming a simple
+geometric [SHAPE], clean modern premium style, centered on white background,
+product photography lighting, no text
+```
+
+### Manifest Example
 ```json
 [
-  {"prompt": "BASE_STYLE + hero-specific details", "filename": "hero/hero-bg.png"},
-  {"prompt": "BASE_STYLE + section bg details", "filename": "hero/section-bg.png"},
-  {"prompt": "BASE_STYLE + module1 card with MODULE1_COLOR", "filename": "modules/module1-card.png"},
-  {"prompt": "BASE_STYLE + module2 card with MODULE2_COLOR", "filename": "modules/module2-card.png"},
-  {"prompt": "BASE_STYLE + page banner for MODULE1_COLOR", "filename": "banners/module1-banner.png"},
-  {"prompt": "BASE_STYLE + icon for sidebar", "filename": "sidebar/module1.png"},
-  {"prompt": "BASE_STYLE + nav thumbnail", "filename": "nav/page1.png"}
+  {"prompt": "A premium SaaS hero background...", "filename": "hero-bg.png", "aspect": "16:9", "size": "2K"},
+  {"prompt": "A minimalist shield icon...", "filename": "icon-security.png", "aspect": "1:1", "size": "1K"}
 ]
 ```
 
+---
+
 ## Avoiding Safety Filter Rejections
 
-Gemini's safety classifier blocks prompts it flags as ambiguous or potentially problematic. The pattern: **concrete photographic descriptions succeed; abstract conceptual ones fail.**
+Gemini's safety classifier blocks prompts it considers ambiguous. **Concrete, photographic descriptions succeed; abstract conceptual ones fail.**
 
-### What Gets Blocked
-
-- Vague texture descriptions: "moody dark surface", "abstract texture"
-- Conceptual-only prompts: "gold metallic effect", "luxury feel"
-- Ambiguous subjects without physical grounding
-
-### How to Fix Blocked Prompts
-
-1. **Describe what the camera sees** — "Close-up photograph of dark charcoal paper" not "dark texture"
-2. **Name physical materials** — "handmade paper", "polished brass surface", "ink on paper"
-3. **Add photographic context** — "macro photography", "product photography", "DSLR close-up"
+### Rules
+1. **Describe what the camera sees** — "Close-up photograph of paper" not "paper texture"
+2. **Name physical materials** — "handmade paper", "brass surface", "ink on paper"
+3. **Add photographic context** — "macro photography", "product photography", "close-up"
 4. **Use specific color names** — "cream colored", "dark charcoal" not just "warm" or "dark"
-5. **Always pair adjectives with nouns** — "elegant serif calligraphy style" not just "elegant"
+5. **Pair adjectives with nouns** — "elegant serif calligraphy" not just "elegant"
 
-### Before/After Examples
-
+### Before/After
 ```
-BLOCKED: "seamless tileable vellum texture, warm cream undertones"
-WORKS:   "Close-up photograph of high quality cream colored handmade paper with visible subtle fiber texture, warm ivory tones, soft natural light"
-
-BLOCKED: "abstract dark moody surface texture"
-WORKS:   "Close-up photograph of dark charcoal colored handmade paper texture, near-black surface with visible subtle fiber grain, macro photography"
+BLOCKED: "seamless tileable vellum texture"
+WORKS:   "Close-up photograph of cream colored handmade paper with visible fiber texture, warm ivory tones, soft natural light"
 
 BLOCKED: "gold metallic circle button"
-WORKS:   "Brushed gold metallic circle on white background, warm polished brass surface texture, subtle radial polish marks, clean product photography"
+WORKS:   "Brushed gold metallic circle on white background, warm polished brass surface, subtle radial polish marks, clean product photography"
 ```
 
-## Don't Use Gemini For These — Use Programmatic Fallback
+---
 
-The script auto-detects these keywords and generates with Pillow instead of calling the API:
+## Programmatic Fallback (Auto-Detected)
 
-| Need | Include This in Your Prompt | What Happens |
-|---|---|---|
-| Noise/grain overlay | "noise texture", "grain texture", "film grain", "grainy", "digital noise" | Generates random RGBA noise at appropriate opacity |
-| Solid color fill | "solid color", "solid background", "plain background", "uniform background" + hex code | Generates single-color image |
-| Simple gradient | "simple gradient", "linear gradient background", "color gradient", "vertical gradient" + 2 hex codes | Generates two-color vertical gradient |
+These prompt types are auto-generated with Pillow instead of calling the API:
 
-If you need these, just include the keywords naturally in your prompt and the scripts handle it automatically.
+| Need | Keywords to Include | What Generates |
+|------|-------------------|----------------|
+| Noise/grain overlay | "noise texture", "film grain", "digital noise" | Random RGBA noise |
+| Solid color fill | "solid color", "solid background" + hex code | Single-color image |
+| Simple gradient | "simple gradient", "linear gradient" + 2 hex codes | Two-color vertical gradient |
 
-**For anything else Gemini can't do well** (exact text, transparent backgrounds, pixel-perfect patterns), generate a placeholder with Gemini and post-process with Pillow, or create the asset directly in code (SVG, CSS gradients, Canvas).
+---
 
-**Important:** Gemini always generates opaque images. Do NOT specify "transparent background" in prompts — it won't work. Use "on white background" or "on [color] background" instead. If you need transparency, remove the background in post-processing with Pillow.
+## Known Limitations
 
-## Tips
-
-1. **Be specific about colors** — Gemini responds well to hex codes and named colors
-2. **Specify negative space** — "with ample white space", "isolated on white background"
-3. **Include technical specs** — "sharp edges", "no blur", "high contrast"
-4. **For icons** — always specify "on white background" (NOT transparent — Gemini can't do transparent)
-5. **For patterns** — specify "seamless", "tileable", "repeating pattern"
-6. **For UI elements** — reference specific design systems: "Material Design", "Apple HIG"
-7. **Iterate** — Use the `--input` flag to edit/refine generated images
-8. **For textures/backgrounds** — always frame as "photograph of [physical material]" not abstract descriptions
-9. **For Vercel sites** — use the Web UI Asset Presets section above for consistent, high-quality results
+1. **Transparent backgrounds** — Gemini always generates opaque. Use "on white background" then remove in post.
+2. **Pixel-perfect text** — Improved but not production-ready. Use SVG/CSS for final text.
+3. **Seamless tileable patterns** — Hit-or-miss. Use CSS patterns for reliability.
+4. **UI mockups with precise layouts** — Better to code in HTML/CSS.
+5. **Very abstract concepts** — "the feeling of growth" fails; "golden crystalline prisms ascending" works.

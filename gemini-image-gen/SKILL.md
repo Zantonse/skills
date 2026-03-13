@@ -96,16 +96,33 @@ python3 scripts/batch_generate.py \
 
 Fields: `prompt` (required), `filename` (required), `aspect` (optional), `size` (optional), `input` (optional, editing via direct API only).
 
-## Prompt Tips
+## Prompt Crafting — The Key Principles
 
-- **Be specific about colors**: include hex codes like `#3b82f6 blue`
-- **For icons**: always specify "on white background" (NOT transparent — Gemini can't generate transparent images)
-- **For backgrounds**: specify "seamless" or "tileable" if needed for CSS
-- **For brand consistency**: reference the project's color palette in every prompt
-- **For dashboards**: "clean", "corporate", "data visualization", "infographic" work well
-- **For Vercel web UI**: See the Web UI Asset Presets in the prompt guide for hero backgrounds, cards, banners, icons, and nav thumbnails
+**Write natural language, not keyword lists.** Gemini rewards creative direction over tag soup.
 
-See [references/prompt-guide.md](references/prompt-guide.md) for full prompt engineering guide with web UI presets.
+- BAD: `"dog, park, sunset, 4k, realistic, cinematic"`
+- GOOD: `"A golden retriever bounding through a sun-dappled park at golden hour, shot from a low angle with shallow depth of field"`
+
+**Be specific.** Add materiality, texture, and context:
+- Instead of "a cup": `"a handmade ceramic coffee cup with an uneven clay glaze, steam curling upward"`
+
+**Use camera language.** The model understands: shallow depth of field, Rembrandt lighting, wide establishing shot, 35mm film grain, macro photography.
+
+**Mention the purpose.** "Create a hero image for a premium coffee brand's website" helps the model infer appropriate composition and lighting.
+
+**Edit, don't re-roll.** When an image is mostly right, request conversational changes: "Make the lighting warmer" or "Remove the background person." The model adjusts physics automatically.
+
+### Reference Images & Consistency
+- Up to **5 consistent characters** and **14 consistent objects** per workflow
+- Use: "Keep facial features exactly the same as the reference"
+- For storyboarding: "Identity and attire must stay consistent throughout"
+
+### Text in Images
+Gemini has strong text rendering. Always put exact text in **quotation marks**:
+- `with the text "MIDNIGHT REVERIE" in bold art deco typography`
+- Specify style: "handwritten script", "retro neon sign", "bold sans-serif"
+
+See [references/prompt-guide.md](references/prompt-guide.md) for the full prompt engineering guide with camera/lighting/material vocabularies, example prompts, web UI presets, and anti-patterns to avoid.
 
 ## Reliability Features
 
@@ -160,7 +177,7 @@ These prompt categories reliably fail or produce poor results. Use the programma
 
 1. **Pure noise/grain textures** — Auto-handled by programmatic fallback
 2. **Solid color images** — Auto-handled by programmatic fallback
-3. **Exact text rendering** — Gemini struggles with specific text (use SVG/CSS instead)
+3. **Exact text rendering** — Improved (state-of-the-art for AI), but not pixel-perfect for production. Use SVG/CSS for final text.
 4. **Transparent backgrounds** — Gemini always generates opaque images (use Pillow to remove backgrounds post-generation)
 5. **Pixel-perfect patterns** — Seamless tileable patterns are hit-or-miss; use CSS patterns instead
 6. **UI mockups with precise layouts** — Better to code these directly in HTML/CSS

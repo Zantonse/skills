@@ -89,14 +89,55 @@ cd {company}-dashboard
 npm install recharts
 ```
 
-### Step 3.2: Build Pages
+### Step 3.2: Configure globals.css (Tailwind v4)
+
+**CRITICAL:** Tailwind v4 uses CSS Cascade Layers. Unlayered CSS silently overrides ALL Tailwind utilities. The `globals.css` MUST follow this exact structure:
+
+```css
+@import "tailwindcss";
+
+@theme {
+  --color-bg: #F7F7F5;
+  --color-surface: #FFFFFF;
+  --color-border: #E8E6E1;
+  --color-text: #1A1A1A;
+  --color-text-secondary: #6B6B6B;
+  --color-text-muted: #8A8A8A;
+  /* ... other tokens ... */
+  --font-sans: "DM Sans", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+}
+
+/* Resets MUST be inside @layer base — bare * {} kills all spacing utilities */
+@layer base {
+  html { height: 100%; -webkit-font-smoothing: antialiased; }
+  body { height: 100%; font-family: var(--font-sans); font-size: 14px; color: #1A1A1A; background: #F7F7F5; }
+  ul, ol { list-style: none; }
+  a { color: inherit; text-decoration: none; }
+  table { border-collapse: collapse; }
+}
+
+/* Component classes MUST be in @layer components so TW utilities can override */
+@layer components {
+  .card { background: #FFFFFF; border: 1px solid #E8E6E1; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+  .section-label { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #7A7A7A; margin-bottom: 16px; }
+  .badge { display: inline-flex; align-items: center; font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 4px; }
+}
+```
+
+**Sidebar layout:** Use `style={{ marginLeft: 240 }}` on `<main>`, NOT `ml-[240px]` (arbitrary TW classes can fail silently).
+
+**Font loading:** Use `<link>` tag in layout.tsx `<head>`, NOT `@import url()` in CSS (causes build warning about @import ordering).
+
+### Step 3.3: Build Pages
 
 For each approved section, create a page or tab component. Follow these principles:
 - **Light mode default** with dark mode toggle (per CLAUDE.md)
 - **Recharts** for any data visualization (comparison charts, timelines, metrics)
 - **Responsive** — desktop and tablet layouts
-- **Navigation** — sidebar or top nav linking all sections
+- **Navigation** — dark sidebar with grouped nav items, light content area
 - Each section should be a separate page under `/app/{section-slug}/page.tsx`
+- Use `card` CSS class for all content containers, `section-label` for headers, `badge` for status indicators
 
 ### Step 3.3: Content Population
 
