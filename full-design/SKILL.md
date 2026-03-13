@@ -59,6 +59,17 @@ When invoked, immediately ask the user one question:
 
 Then run all three stages autonomously using that context. Do not pause between stages.
 
+## Tailwind v4 Safety (MANDATORY)
+
+When generating CSS for Tailwind v4 projects, enforce these rules — violation causes silent, total UI breakage:
+
+1. **All CSS resets go inside `@layer base { }`** — bare `* { margin: 0; padding: 0; }` kills ALL spacing utilities
+2. **Custom component classes go inside `@layer components { }`** — `.card`, `.badge`, etc.
+3. **Use hardcoded values in custom classes** — `var()` refs to `@theme` tokens may not resolve in build
+4. **Use inline `style={{ }}` for layout-critical fixed values** — `ml-[240px]` can fail silently
+5. **Font imports via `<link>` in layout `<head>`** — not `@import url()` in CSS
+6. **Correct file structure:** `@import "tailwindcss"` → `@theme {}` → `@layer base {}` → `@layer components {}`
+
 ## Notes
 
 - Always use `model: "sonnet"` for any subagents dispatched

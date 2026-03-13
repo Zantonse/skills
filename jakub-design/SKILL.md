@@ -115,3 +115,13 @@ When custom icons are needed, invoke `/gemini-image-gen`:
 - Geometric centering without optical adjustment → adjust icons ~1px
 - Entry animations without exit animations → always add `exit` prop
 - Overly saturated accents → keep chroma restrained
+
+## Tailwind v4 Safety (MANDATORY)
+
+When writing CSS for Tailwind v4 projects:
+
+1. **All CSS resets inside `@layer base { }`** — bare `* { margin: 0 }` kills ALL spacing utilities
+2. **Custom component classes inside `@layer components { }`** — `.card`, `.badge`, etc.
+3. **Hardcoded values in custom classes** — `var()` refs to `@theme` may not resolve in build
+4. **Inline styles for layout-critical fixed values** — `ml-[240px]` can fail silently, use `style={{ marginLeft: 240 }}`
+5. **Correct structure:** `@import "tailwindcss"` → `@theme {}` → `@layer base {}` → `@layer components {}`
