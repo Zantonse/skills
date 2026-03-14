@@ -60,11 +60,44 @@ python3 scripts/batch_generate.py \
 
 ## Models
 
-| Model | Best For | Via LiteLLM | Via Direct API |
-|---|---|---|---|
-| `gemini-3-pro-image-preview` | Highest quality. Default for LiteLLM. | Yes | Yes |
-| `gemini-3.1-flash-image-preview` | Best quality/cost. Aspect + size control (512px–4K). | Check proxy config | Yes |
-| `gemini-2.5-flash-image` | Fast, cost-efficient. Fixed 1024px. Default for direct. | Check proxy config | Yes |
+### Raster Image Generation (Imagen / Nano Banana)
+
+| Model | Consumer Name | Best For | Via LiteLLM | Via Direct API |
+|---|---|---|---|---|
+| `gemini-3-pro-image-preview` | Nano Banana Pro | Highest quality. Default for LiteLLM. | Yes | Yes |
+| `gemini-3.1-flash-image-preview` | Nano Banana (Fast) | Best quality/cost. Aspect + size control (512px–4K). Free tier. | Check proxy config | Yes |
+| `imagen-4.0-generate-001` | Imagen 4 | Dedicated image API. 1K/2K. Up to 4 images per call. | No | Yes (Vertex AI / Gemini API) |
+| `imagen-4.0-ultra-generate-001` | Imagen 4 Ultra | Highest fidelity. 2K max. | No | Yes |
+| `imagen-4.0-fast-generate-001` | Imagen 4 Fast | Low latency. 1K only. | No | Yes |
+
+Note: Imagen 3 is shut down. `gemini-2.5-flash-image` is deprecated (fixed 1024px, no aspect/size control).
+
+### SVG Code Generation (for web icons)
+
+For scalable web icons, Gemini's **text models** can generate clean SVG XML code directly — no Imagen needed. This bypasses the transparent background limitation entirely and produces infinitely scalable, CSS-themeable assets.
+
+| Model | SVG Quality | Best Use |
+|---|---|---|
+| `gemini-3.1-pro-preview` | Excellent | Complex icons, UI components |
+| `gemini-2.5-flash` | Good | Quick iterations, simple shapes |
+
+**SVG generation example:**
+```bash
+# Use the text model, not image generation
+python3 -c "
+from google import genai
+client = genai.Client()
+response = client.models.generate_content(
+    model='gemini-2.5-flash',
+    contents='Generate an SVG icon of a shield with a checkmark. Output ONLY the SVG code. viewBox=\"0 0 24 24\", 2px stroke, no fill, rounded line caps, use currentColor.'
+)
+print(response.text)
+" > icon-shield.svg
+```
+
+**When to use SVG vs raster:**
+- **SVG (text model):** Web icons, favicons, UI elements, anything that needs to scale or be themed with CSS
+- **Raster (Imagen):** Hero images, backgrounds, textures, photography-style assets, app store icons
 
 ## Workflow
 
@@ -96,7 +129,18 @@ python3 scripts/batch_generate.py \
 
 Fields: `prompt` (required), `filename` (required), `aspect` (optional), `size` (optional), `input` (optional, editing via direct API only).
 
-## Prompt Crafting — The Key Principles
+## Prompt Crafting — The SCULPT Framework
+
+Use the official Google SCULPT framework for consistent results:
+
+```
+S — Subject: what's in the image
+C — Context: surrounding environment or mood
+U — Use: platform/purpose (e.g., "website hero background")
+L — Look: style, mood, palette
+P — Photographic: camera angle, lens, depth of field
+T — Technical: aspect ratio, negative space, constraints ("no text", "no logos")
+```
 
 **Write natural language, not keyword lists.** Gemini rewards creative direction over tag soup.
 
@@ -110,17 +154,52 @@ Fields: `prompt` (required), `filename` (required), `aspect` (optional), `size` 
 
 **Mention the purpose.** "Create a hero image for a premium coffee brand's website" helps the model infer appropriate composition and lighting.
 
+**Use positive framing for safety filters.** Never use "no people" — instead describe what IS there: "pure abstract geometric pattern with no figurative elements." Set `personGeneration: "dont_allow"` in API config for all non-portrait work.
+
 **Edit, don't re-roll.** When an image is mostly right, request conversational changes: "Make the lighting warmer" or "Remove the background person." The model adjusts physics automatically.
 
 ### Reference Images & Consistency
 - Up to **5 consistent characters** and **14 consistent objects** per workflow
 - Use: "Keep facial features exactly the same as the reference"
 - For storyboarding: "Identity and attire must stay consistent throughout"
+- **3x3 grid trick for icon sets:** Generate all icons in a single grid prompt to force visual consistency:
+  ```
+  A 3x3 grid of flat design icons on a white background. Each icon represents:
+  home, search, profile, settings, notifications, cart, favorites, share, help.
+  All icons share: 2px stroke, rounded corners, monochrome blue, consistent 48x48pt size.
+  ```
 
 ### Text in Images
-Gemini has strong text rendering. Always put exact text in **quotation marks**:
+Gemini has strong text rendering (best-in-class alongside DALL-E 3, ahead of Midjourney). Always put exact text in **quotation marks**:
 - `with the text "MIDNIGHT REVERIE" in bold art deco typography`
 - Specify style: "handwritten script", "retro neon sign", "bold sans-serif"
+- Keep text under 25 characters for reliable rendering
+
+### Hero Images with Text Overlay Space
+Explicitly request negative space where text will go:
+```
+Blog hero for a tech article, abstract layered glass panels with soft bokeh depth,
+deep blue and teal palette, negative space on left third for text overlay,
+cinematic lighting, 16:9, no text, no logos, no people
+```
+
+### CSS + AI Hybrid Backgrounds
+For the best hero backgrounds, combine CSS gradients (exact brand colors) with AI textures (organic depth):
+```css
+.hero {
+  background: linear-gradient(135deg, oklch(0.2 0.1 240), oklch(0.15 0.08 210));
+  position: relative;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url('/hero-texture.webp') center/cover;
+  opacity: 0.15;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+}
+```
 
 See [references/prompt-guide.md](references/prompt-guide.md) for the full prompt engineering guide with camera/lighting/material vocabularies, example prompts, web UI presets, and anti-patterns to avoid.
 
@@ -173,15 +252,23 @@ This happens automatically — no flags needed. If the prompt contains these key
 
 ## Known Limitations — What Gemini Cannot Generate
 
-These prompt categories reliably fail or produce poor results. Use the programmatic fallback or manual creation:
+These prompt categories reliably fail or produce poor results. Use the workaround listed:
 
-1. **Pure noise/grain textures** — Auto-handled by programmatic fallback
-2. **Solid color images** — Auto-handled by programmatic fallback
-3. **Exact text rendering** — Improved (state-of-the-art for AI), but not pixel-perfect for production. Use SVG/CSS for final text.
-4. **Transparent backgrounds** — Gemini always generates opaque images (use Pillow to remove backgrounds post-generation)
-5. **Pixel-perfect patterns** — Seamless tileable patterns are hit-or-miss; use CSS patterns instead
+1. **Pure noise/grain textures** — Auto-handled by programmatic fallback (Pillow)
+2. **Solid color images** — Auto-handled by programmatic fallback (Pillow)
+3. **Exact text rendering** — Strong (best alongside DALL-E 3, ahead of Midjourney), but not pixel-perfect. Use SVG/CSS for final production text. For badges/labels, Ideogram 3.0 is the specialist alternative.
+4. **Transparent backgrounds** — Gemini always generates opaque images. Workarounds:
+   - Generate with bright green `#00FF00` background, then use `rembg` (Python, 22K+ GitHub stars) for chroma-key removal
+   - Use Gemini Canvas to build a chroma-key removal app
+   - Use Google AI Studio code execution for background removal
+   - **Best alternative:** Use SVG code generation via text model instead — natively transparent
+5. **Seamless tileable patterns** — Imagen does not generate mathematically seamless edges. Workarounds:
+   - Generate large 1:1 at 2K, use `background-size: cover` (no tiling needed)
+   - Post-process with Photoshop offset filter to create seamless version
+   - Use CSS patterns for reliable tiling
 6. **UI mockups with precise layouts** — Better to code these directly in HTML/CSS
 7. **Very abstract conceptual requests** — "the feeling of growth" fails; "golden crystalline prisms ascending" works
+8. **Stylized illustration (editorial/artistic)** — Gemini leans photorealistic. For painterly/editorial illustrations, Midjourney V7 is stronger. For flat/isometric web illustrations, DALL-E 3 is better.
 
 ## Gotchas
 
