@@ -56,34 +56,60 @@ def _load_env_file():
 _load_env_file()
 
 
-def ensure_openai():
-    """Install openai package if not available."""
+def ensure_anthropic():
+    """Install anthropic package if not available."""
     try:
-        import openai  # noqa: F401
+        import anthropic  # noqa: F401
     except ImportError:
-        print("Installing openai package...")
+        print("Installing anthropic package...")
         try:
             subprocess.check_call(
-                [sys.executable, "-m", "pip", "install", "openai", "-q"],
+                [sys.executable, "-m", "pip", "install", "anthropic", "-q"],
                 stdout=subprocess.DEVNULL,
                 stderr=subprocess.PIPE,
             )
         except subprocess.CalledProcessError as e:
-            print(f"Failed to install openai: {e.stderr.decode() if e.stderr else 'unknown'}", file=sys.stderr)
+            print(f"Failed to install anthropic: {e.stderr.decode() if e.stderr else 'unknown'}", file=sys.stderr)
             sys.exit(1)
 
 
-DEFAULT_MODEL = "gemini-3.1-pro-preview"
+DEFAULT_MODEL = "claude-4-6-sonnet"
 
-DEFAULT_SYSTEM = """You are a deep research analyst. Produce thorough, well-structured research.
+DEFAULT_SYSTEM = """You are a senior research analyst at a leading advisory firm, specializing in \
+cybersecurity, identity management, and enterprise technology.
 
-Guidelines:
-- Lead with key findings and executive summary
-- Organize by topic with clear headers
-- Cite specific facts, numbers, and dates when available
-- Flag uncertainties and knowledge gaps explicitly
-- End with actionable recommendations or next steps
-- Use markdown formatting for readability"""
+Produce thorough, well-structured research briefs that meet these standards:
+
+## Structure
+- Open with a 2-3 sentence executive summary of key findings
+- Organize by topic with clear markdown headers
+- End with a prioritized "Recommendations & Next Steps" section
+- Include a "Knowledge Gaps & Limitations" section before recommendations
+
+## Analytical Depth
+- Go beyond surface descriptions — compare, contrast, and explain *why*
+- Identify non-obvious patterns, second-order effects, and emerging trends
+- When comparing vendors or approaches, provide a clear framework for comparison
+
+## Factual Grounding (CRITICAL — this is the most important quality)
+- Every major claim must be backed by a specific fact: a number, date, percentage, or named source
+- Attribute data to sources (e.g., "according to Gartner's 2025 Magic Quadrant...", "per Forrester's Q3 2025 report...")
+- Clearly distinguish established facts from your inferences — use phrases like "Based on available data..." vs "It is estimated that..."
+- When statistics are cited, always include the year or quarter they refer to
+- Do NOT make vague claims like "the market is growing rapidly" — instead say "the market grew 18% YoY to $X billion in 2025"
+- Include specific product versions, release dates, and technical specifications where relevant
+
+## Actionability
+- Recommendations must be concrete and specific, not generic advice
+- Each recommendation should reference evidence from the analysis
+- Prioritize recommendations by impact and feasibility
+
+## Gaps & Limitations
+- Explicitly flag where data is incomplete, outdated, or uncertain
+- Rate confidence as high/medium/low for major claims
+- Suggest specific follow-up research to fill identified gaps
+- Note where data may be stale (e.g., "market share figures are from 2024 and may have shifted")
+- Identify perspectives or stakeholder viewpoints not covered in the analysis"""
 
 SALES_ACCOUNT_SYSTEM = """You are a Sales Engineer researching a prospect account. Produce a comprehensive account overview.
 
@@ -132,10 +158,10 @@ def research(
     system_prompt: Optional[str] = None,
     model: str = DEFAULT_MODEL,
     mode: str = "general",
-    max_tokens: int = 16000,
+    max_tokens: int = 24000,
 ) -> str:
-    """Send a research query to Gemini via LiteLLM and return the response."""
-    from openai import OpenAI
+    """Send a research query to Claude with extended thinking via LiteLLM proxy."""
+    from anthropic import Anthropic
 
     api_key = os.environ.get("LITELLM_API_KEY")
     base_url = os.environ.get("LITELLM_BASE_URL")
@@ -148,11 +174,7 @@ def research(
         )
         sys.exit(1)
 
-    base_url = base_url.rstrip("/")
-    if not base_url.endswith("/v1"):
-        base_url += "/v1"
-
-    client = OpenAI(api_key=api_key, base_url=base_url)
+    client = Anthropic(api_key=api_key, base_url=base_url)
 
     # Select system prompt based on mode
     if system_prompt:
@@ -167,20 +189,27 @@ def research(
     if context:
         user_msg = f"## Research Context\n\n{context}\n\n---\n\n## Research Query\n\n{query}"
 
-    messages = [
-        {"role": "system", "content": sys_msg},
-        {"role": "user", "content": user_msg},
-    ]
+    messages = [{"role": "user", "content": user_msg}]
 
-    print(f"Researching with {model}...", file=sys.stderr)
+    print(f"Researching with {model} (extended thinking)...", file=sys.stderr)
 
     try:
-        response = client.chat.completions.create(
+        # Use streaming to avoid timeout with extended thinking + large output
+        with client.messages.stream(
             model=model,
-            messages=messages,
             max_tokens=max_tokens,
-            temperature=0.3,  # Lower temp for factual research
-        )
+            system=sys_msg,
+            messages=messages,
+            temperature=1,  # Required for extended thinking
+            thinking={
+                "type": "enabled",
+                "budget_tokens": 8000,
+            },
+        ) as stream:
+            for event in stream:
+                pass  # consume the stream
+
+        response = stream.get_final_message()
     except Exception as e:
         msg = str(e).lower()
         if "429" in msg or "rate limit" in msg:
@@ -193,17 +222,22 @@ def research(
             print(f"API error: {e}", file=sys.stderr)
             sys.exit(1)
 
-    result = response.choices[0].message.content
+    # Extract text block (skip thinking blocks)
+    result = ""
+    for block in response.content:
+        if block.type == "text":
+            result = block.text
+            break
+
     if not result:
         print("Warning: Empty response from model", file=sys.stderr)
         return ""
 
-    token_usage = getattr(response, "usage", None)
-    if token_usage:
+    usage = response.usage
+    if usage:
         print(
-            f"Tokens — prompt: {token_usage.prompt_tokens:,}, "
-            f"completion: {token_usage.completion_tokens:,}, "
-            f"total: {token_usage.total_tokens:,}",
+            f"Tokens — input: {usage.input_tokens:,}, "
+            f"output: {usage.output_tokens:,}",
             file=sys.stderr,
         )
 
@@ -212,8 +246,8 @@ def research(
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Deep research via Gemini 3.1 Pro Preview. "
-        "Sends queries to Gemini's large context window for thorough analysis."
+        description="Deep research via Claude Sonnet with extended thinking. "
+        "Uses extended thinking for deeper analysis before writing."
     )
     parser.add_argument("--query", "-q", required=True, help="Research query or question")
     parser.add_argument(
@@ -247,7 +281,7 @@ def main():
     )
     args = parser.parse_args()
 
-    ensure_openai()
+    ensure_anthropic()
 
     # Gather context from files and stdin
     context_parts = []

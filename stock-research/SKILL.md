@@ -1,6 +1,6 @@
 ---
 name: stock-research
-description: "Comprehensive stock, ETF, and sector investment research that scrapes financial data from public sources, synthesizes analysis with Gemini, and writes structured reports to the Obsidian vault. Use when the user asks to research a stock, analyze a ticker, look up company financials, build an investment thesis, do a stock deep dive, or perform any financial/investment analysis. Triggers on: stock ticker symbols (AAPL, TSLA, NVDA), 'stock research', 'analyze [ticker]', 'investment research', 'financial analysis', 'look up [company]', 'stock deep dive', 'research [ticker]', 'what do you think about [stock]', 'should I buy [stock]', 'pull up financials for', 'ETF analysis', 'sector research', or any request combining a company name or ticker with investment, financial, or trading intent. Also trigger when the user mentions wanting to add a stock to a watchlist or compare investments."
+description: "Comprehensive stock, ETF, and sector investment research that scrapes financial data from 14 public sources, synthesizes analysis with Claude Sonnet (extended thinking) for deeper analytical quality, and writes structured reports to the Obsidian vault. Use when the user asks to research a stock, analyze a ticker, look up company financials, build an investment thesis, do a stock deep dive, or perform any financial/investment analysis. Triggers on: stock ticker symbols (AAPL, TSLA, NVDA), 'stock research', 'analyze [ticker]', 'investment research', 'financial analysis', 'look up [company]', 'stock deep dive', 'research [ticker]', 'what do you think about [stock]', 'should I buy [stock]', 'pull up financials for', 'ETF analysis', 'sector research', or any request combining a company name or ticker with investment, financial, or trading intent. Also trigger when the user mentions wanting to add a stock to a watchlist or compare investments."
 ---
 
 # Stock Research
@@ -12,7 +12,7 @@ Perform investment research for stocks, ETFs, or sectors and write structured re
 The skill uses `scripts/research_stock.py` to:
 1. Resolve a ticker symbol (or look one up from a company name)
 2. Scrape 14 data sources concurrently (Yahoo Finance, Finviz, TradingView, StockAnalysis, Macrotrends, SEC EDGAR, OpenInsider, Barchart, CapitolTrades, Google News, sector trends)
-3. Send all scraped context to Gemini (via LiteLLM) with a stock-analysis system prompt
+3. Send all scraped context to Claude Sonnet with extended thinking (via LiteLLM) for deep synthesis
 4. Format the output with Obsidian YAML frontmatter and wiki-links
 5. Save to `~/Documents/ObsidianNotes/Claude-Research/investments/`
 
@@ -87,12 +87,13 @@ This approach researches 4 stocks in roughly the same wall-clock time as 1, beca
 
 ## Dependencies
 
-- Python 3 with `requests`, `beautifulsoup4`, `tradingview_ta` (auto-installed if missing)
-- LiteLLM credentials in `~/.claude-litellm.env` (same as deep-research skill)
+- Python 3 with `requests`, `beautifulsoup4`, `anthropic`, `tradingview_ta` (auto-installed if missing)
+- LiteLLM credentials in `~/.claude-litellm.env` (same as deep-research and account-research skills)
 - Obsidian vault at `~/Documents/ObsidianNotes/`
 
 ## Troubleshooting
 
 - If scraping fails for a source, the script continues with remaining sources and notes the gap
-- If Gemini returns an error, check that `~/.claude-litellm.env` has valid `LITELLM_API_KEY` and `LITELLM_BASE_URL`
-- The script auto-installs missing packages (`requests`, `beautifulsoup4`, `openai`, `tradingview_ta`)
+- If the API returns an error, check that `~/.claude-litellm.env` has valid `LITELLM_API_KEY` and `LITELLM_BASE_URL`
+- The script auto-installs missing packages (`requests`, `beautifulsoup4`, `anthropic`, `tradingview_ta`)
+- Extended thinking requires `temperature=1` — this is set automatically in the synthesis function

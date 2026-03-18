@@ -1,11 +1,11 @@
 ---
 name: deep-research
-description: "Deep research and analysis using Gemini 3.1 Pro Preview's large context window via LiteLLM proxy. Use when: (1) the user asks a deep, complex, or multi-faceted question requiring thorough analysis, (2) researching a company for a sales account overview or prospect briefing, (3) any request containing 'deep research', 'research this', 'deep dive', 'thorough analysis', or 'account overview', (4) comparing technologies, architectures, or approaches in depth, (5) market research, competitive analysis, or industry landscape questions, (6) when a subagent needs deep analytical capability beyond web search. Triggers on: 'deep research', 'research', 'account overview', 'company research', 'deep dive', 'analyze thoroughly', 'competitive analysis', 'market research', or any question that requires synthesis across many data points."
+description: "Deep research and analysis using Claude Sonnet with extended thinking via LiteLLM proxy. Use when: (1) the user asks a deep, complex, or multi-faceted question requiring thorough analysis, (2) researching a company for a sales account overview or prospect briefing, (3) any request containing 'deep research', 'research this', 'deep dive', 'thorough analysis', or 'account overview', (4) comparing technologies, architectures, or approaches in depth, (5) market research, competitive analysis, or industry landscape questions, (6) when a subagent needs deep analytical capability beyond web search. Triggers on: 'deep research', 'research', 'account overview', 'company research', 'deep dive', 'analyze thoroughly', 'competitive analysis', 'market research', or any question that requires synthesis across many data points."
 ---
 
 # Deep Research
 
-Send complex queries to Gemini 3.1 Pro Preview for thorough analysis via `scripts/research.py`. Uses `LITELLM_API_KEY` and `LITELLM_BASE_URL` from the environment (set in `~/.claude-litellm.env`).
+Send complex queries to Claude Sonnet with extended thinking for thorough analysis via `scripts/research.py`. Uses extended thinking (8K token budget) for deeper analytical planning before writing. Routes through LiteLLM proxy using `LITELLM_API_KEY` and `LITELLM_BASE_URL` from `~/.claude-litellm.env`.
 
 ## Two Research Modes
 

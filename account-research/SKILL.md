@@ -1,6 +1,6 @@
 ---
 name: account-research
-description: "Structured account research for Sales Engineering prep. Scrapes 10 public data sources in parallel, synthesizes with Gemini into an SE-ready brief, and writes to the Obsidian vault. Derives business goals from signals, detects identity/security stack, and generates discovery questions and talk tracks. Use when the user asks to research a company, prep for a call, build an account overview, or do prospect research. Triggers on: 'account research', 'research [company]', 'prep for [company]', 'account overview', 'prospect research', 'who is [company]', 'what does [company] do', 'research account', or any request combining a company name with sales, SE, or account prep intent. Also trigger when the user mentions preparing for a customer call or needs a company brief."
+description: "Structured account research for Sales Engineering prep. Scrapes 10 public data sources in parallel, synthesizes with Claude Sonnet (extended thinking) into an SE-ready brief, and writes to the Obsidian vault. Derives business goals from signals, detects identity/security stack, and generates discovery questions and talk tracks. Use when the user asks to research a company, prep for a call, build an account overview, or do prospect research. Triggers on: 'account research', 'research [company]', 'prep for [company]', 'account overview', 'prospect research', 'who is [company]', 'what does [company] do', 'research account', or any request combining a company name with sales, SE, or account prep intent. Also trigger when the user mentions preparing for a customer call or needs a company brief."
 ---
 
 # Account Research
@@ -12,7 +12,7 @@ Perform structured account research for Sales Engineering and write SE-ready bri
 The skill uses `scripts/research_account.py` to:
 1. Resolve the company name to a domain
 2. Scrape 5-10 public data sources concurrently (company website, news, funding, job postings, tech stack, reviews, SEC filings, Glassdoor, industry news, competitor references)
-3. Send all scraped context to Gemini (via LiteLLM) with an SE-focused system prompt
+3. Send all scraped context to Claude Sonnet with extended thinking (via LiteLLM) for deep synthesis
 4. Format the output with Obsidian YAML frontmatter and wiki-links
 5. Save to `~/Documents/ObsidianNotes/Claude-Research/accounts/`
 

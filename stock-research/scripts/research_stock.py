@@ -54,7 +54,7 @@ _load_env_file()
 
 def _ensure_packages():
     """Install required packages if missing."""
-    for pkg, import_name in [("requests", "requests"), ("beautifulsoup4", "bs4"), ("openai", "openai"), ("tradingview_ta", "tradingview_ta")]:
+    for pkg, import_name in [("requests", "requests"), ("beautifulsoup4", "bs4"), ("anthropic", "anthropic"), ("tradingview_ta", "tradingview_ta")]:
         try:
             __import__(import_name)
         except ImportError:
@@ -78,7 +78,7 @@ SCRIPT_DIR = Path(__file__).parent.resolve()
 SKILL_DIR = SCRIPT_DIR.parent
 PROMPT_FILE = SKILL_DIR / "references" / "stock-research-prompt.md"
 OBSIDIAN_BASE = Path.home() / "Documents" / "ObsidianNotes" / "Claude-Research" / "investments"
-DEFAULT_MODEL = "gemini-3.1-pro-preview"
+DEFAULT_MODEL = "claude-4-6-sonnet"
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 "
                   "(KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
@@ -774,8 +774,12 @@ def load_system_prompt() -> str:
 
 def synthesize_with_gemini(ticker: str, asset_type: str, scraped_data: dict[str, str],
                            model: str = DEFAULT_MODEL) -> str:
-    """Send all scraped data to Gemini for synthesis into a research report."""
-    from openai import OpenAI
+    """Send all scraped data to Claude with extended thinking for synthesis.
+
+    Uses extended thinking (8K budget) for deeper analytical planning before
+    writing the investment research report.
+    """
+    from anthropic import Anthropic
 
     api_key = os.environ.get("LITELLM_API_KEY")
     base_url = os.environ.get("LITELLM_BASE_URL")
@@ -787,11 +791,7 @@ def synthesize_with_gemini(ticker: str, asset_type: str, scraped_data: dict[str,
         )
         sys.exit(1)
 
-    base_url = base_url.rstrip("/")
-    if not base_url.endswith("/v1"):
-        base_url += "/v1"
-
-    client = OpenAI(api_key=api_key, base_url=base_url)
+    client = Anthropic(api_key=api_key, base_url=base_url)
     system_prompt = load_system_prompt()
 
     # Build context from all scraped sources
@@ -811,30 +811,44 @@ def synthesize_with_gemini(ticker: str, asset_type: str, scraped_data: dict[str,
 
     user_msg = f"## Scraped Financial Data\n\n{context}\n\n---\n\n## Task\n\n{query}"
 
-    print(f"Synthesizing with {model}...", file=sys.stderr)
+    print(f"Synthesizing with {model} (extended thinking)...", file=sys.stderr)
 
     try:
-        response = client.chat.completions.create(
+        with client.messages.stream(
             model=model,
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_msg},
-            ],
-            max_tokens=16000,
-            temperature=0.3,
-        )
+            max_tokens=24000,
+            system=system_prompt,
+            messages=[{"role": "user", "content": user_msg}],
+            temperature=1,  # Required for extended thinking
+            thinking={
+                "type": "enabled",
+                "budget_tokens": 8000,
+            },
+        ) as stream:
+            for event in stream:
+                pass
+
+        response = stream.get_final_message()
     except Exception as e:
-        print(f"Gemini API error: {e}", file=sys.stderr)
+        print(f"API error: {e}", file=sys.stderr)
         sys.exit(1)
 
-    result = response.choices[0].message.content or ""
+    # Extract text block (skip thinking blocks)
+    result = ""
+    for block in response.content:
+        if block.type == "text":
+            result = block.text
+            break
 
-    usage = getattr(response, "usage", None)
+    if not result:
+        print("Warning: Empty response from model", file=sys.stderr)
+        return ""
+
+    usage = response.usage
     if usage:
         print(
-            f"Tokens — prompt: {usage.prompt_tokens:,}, "
-            f"completion: {usage.completion_tokens:,}, "
-            f"total: {usage.total_tokens:,}",
+            f"Tokens — input: {usage.input_tokens:,}, "
+            f"output: {usage.output_tokens:,}",
             file=sys.stderr,
         )
 

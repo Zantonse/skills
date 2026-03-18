@@ -65,7 +65,7 @@ def _ensure_packages():
     for pkg, import_name in [
         ("requests", "requests"),
         ("beautifulsoup4", "bs4"),
-        ("openai", "openai"),
+        ("anthropic", "anthropic"),
     ]:
         try:
             __import__(import_name)
@@ -91,7 +91,7 @@ SCRIPT_DIR = Path(__file__).parent.resolve()
 SKILL_DIR = SCRIPT_DIR.parent
 PROMPT_FILE = SKILL_DIR / "references" / "account-research-prompt.md"
 OBSIDIAN_BASE = Path.home() / "Documents" / "ObsidianNotes" / "Claude-Research" / "accounts"
-DEFAULT_MODEL = "gemini-3.1-pro-preview"
+DEFAULT_MODEL = "claude-4-6-sonnet"
 HEADERS = {
     "User-Agent": (
         "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 "
@@ -670,20 +670,23 @@ def synthesize_with_gemini(
     model: str = DEFAULT_MODEL,
     existing_brief: Optional[str] = None,
 ) -> str:
-    """Send scraped data to Gemini for synthesis into an account research brief.
+    """Send scraped data to Claude for synthesis into an account research brief.
+
+    Uses extended thinking (8K budget) for deeper analysis before writing.
+    Routes through LiteLLM proxy via Anthropic SDK.
 
     Args:
         company: Dict with name, domain, query keys from resolve_company().
         scraped_data: Dict mapping source display names to scraped text (or None).
         angle: Research context / angle string (e.g. "expansion opportunity").
         depth: One of quick/deep/full — passed to the prompt for context.
-        model: LiteLLM model identifier.
+        model: LiteLLM model identifier (default: claude-4-6-sonnet).
         existing_brief: Optional existing brief content to evolve (update in place).
 
     Returns:
         Synthesized markdown report string.
     """
-    from openai import OpenAI
+    from anthropic import Anthropic
 
     api_key = os.environ.get("LITELLM_API_KEY")
     base_url = os.environ.get("LITELLM_BASE_URL")
@@ -695,11 +698,7 @@ def synthesize_with_gemini(
         )
         sys.exit(1)
 
-    base_url = base_url.rstrip("/")
-    if not base_url.endswith("/v1"):
-        base_url += "/v1"
-
-    client = OpenAI(api_key=api_key, base_url=base_url)
+    client = Anthropic(api_key=api_key, base_url=base_url)
     system_prompt = load_system_prompt()
 
     # Build context sections from scraped sources
@@ -733,7 +732,6 @@ def synthesize_with_gemini(
 
     user_msg_parts = [f"## Scraped Account Intelligence\n\n{context}", f"## Task\n\n{task}"]
 
-    # If an existing brief was found, include it so Gemini can evolve it
     if existing_brief:
         user_msg_parts.insert(
             1,
@@ -745,18 +743,25 @@ def synthesize_with_gemini(
 
     user_msg = "\n\n---\n\n".join(user_msg_parts)
 
-    print(f"Synthesizing with {model}...", file=sys.stderr)
+    print(f"Synthesizing with {model} (extended thinking)...", file=sys.stderr)
 
     try:
-        response = client.chat.completions.create(
+        # Use streaming to avoid timeout with extended thinking + large output
+        with client.messages.stream(
             model=model,
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_msg},
-            ],
-            max_tokens=16000,
-            temperature=0.3,
-        )
+            max_tokens=24000,
+            system=system_prompt,
+            messages=[{"role": "user", "content": user_msg}],
+            temperature=1,  # Required for extended thinking
+            thinking={
+                "type": "enabled",
+                "budget_tokens": 8000,
+            },
+        ) as stream:
+            for event in stream:
+                pass  # consume the stream
+
+        response = stream.get_final_message()
     except Exception as e:
         err_str = str(e).lower()
         if "auth" in err_str or "unauthorized" in err_str or "api key" in err_str:
@@ -768,22 +773,26 @@ def synthesize_with_gemini(
         elif "rate" in err_str or "quota" in err_str or "limit" in err_str:
             print(f"Rate limit / quota error: {e}", file=sys.stderr)
         else:
-            print(f"Gemini API error: {e}", file=sys.stderr)
+            print(f"API error: {e}", file=sys.stderr)
         sys.exit(1)
 
-    result = response.choices[0].message.content or ""
+    # Extract text block (skip thinking blocks)
+    result = ""
+    for block in response.content:
+        if block.type == "text":
+            result = block.text
+            break
 
     if not result.strip():
-        print("Error: Gemini returned an empty response.", file=sys.stderr)
+        print("Error: Model returned an empty response.", file=sys.stderr)
         sys.exit(1)
 
     # Log token usage
-    usage = getattr(response, "usage", None)
+    usage = response.usage
     if usage:
         print(
-            f"Tokens — prompt: {usage.prompt_tokens:,}, "
-            f"completion: {usage.completion_tokens:,}, "
-            f"total: {usage.total_tokens:,}",
+            f"Tokens — input: {usage.input_tokens:,}, "
+            f"output: {usage.output_tokens:,}",
             file=sys.stderr,
         )
 
