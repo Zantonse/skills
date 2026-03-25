@@ -260,7 +260,7 @@ def analyze_with_claude(
 
 
 def generate_followups(debrief: str, account: str, model: str) -> str:
-    """Send Pass 1 debrief to Claude for follow-up email drafts (Pass 2)."""
+    """Send Pass 1 debrief to Claude for combined AE+SE follow-up email draft (Pass 2)."""
     from anthropic import Anthropic
 
     api_key = os.environ.get("ANTHROPIC_AUTH_TOKEN") or os.environ.get("LITELLM_KEY")
@@ -276,8 +276,8 @@ def generate_followups(debrief: str, account: str, model: str) -> str:
         system_prompt = FOLLOWUP_PROMPT_FILE.read_text()
     else:
         system_prompt = (
-            "You are drafting follow-up emails for an SE and AE based on a structured call debrief. "
-            "Produce an SE follow-up email and an AE follow-up email, each 150-250 words."
+            "You are drafting a combined AE+SE follow-up email based on a structured call debrief. "
+            "Produce a single follow-up email co-sent by the AE and SE, 200-350 words."
         )
 
     user_msg = f"""## Account: {account}
@@ -534,7 +534,7 @@ def main():
     if call_type != "internal-prep":
         try:
             followups = generate_followups(debrief, args.account, args.model)
-            combined_debrief = debrief + "\n\n---\n\n## Follow-Up Emails\n\n" + followups
+            combined_debrief = debrief + "\n\n---\n\n## Follow-Up Email\n\n" + followups
         except Exception as e:
             print(f"  Warning: Pass 2 follow-up generation failed: {e}", file=sys.stderr)
             combined_debrief = debrief

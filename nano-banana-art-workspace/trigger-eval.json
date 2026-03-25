@@ -1,0 +1,82 @@
+[
+  {
+    "query": "hey i need a header image for my blog post about the 'identity sprawl problem' in enterprise - something that shows like a messy tangle of user accounts across too many apps",
+    "should_trigger": true
+  },
+  {
+    "query": "can you make me a flowchart showing the okta login flow? user hits the app, gets redirected to okta, does MFA, then lands back. want it clean enough to put in a slide deck",
+    "should_trigger": true
+  },
+  {
+    "query": "I took rough notes in my QBR with Salesforce today - can you turn them into a sketchnote visual I can share with the account team on slack",
+    "should_trigger": true
+  },
+  {
+    "query": "need a hero banner for my newsletter, 1200x600. topic is 'why passwordless is winning in 2026'. something that feels modern and not generic stock-photo-y",
+    "should_trigger": true
+  },
+  {
+    "query": "make a side-by-side comparison visual of Okta vs Entra ID - feature coverage, pricing model, developer experience. going in a competitive deck for a prospect",
+    "should_trigger": true
+  },
+  {
+    "query": "create an architecture diagram for a CIAM deployment: Auth0 tenant in the middle, 3 customer-facing apps on the right, downstream user store + analytics on the left, with arrows showing the token flow",
+    "should_trigger": true
+  },
+  {
+    "query": "I want a stat card for my case study: '73% of breaches involve compromised credentials'. big number, punchy, something i can drop into a slide",
+    "should_trigger": true
+  },
+  {
+    "query": "3-panel comic strip explaining what a JWT token is - aimed at a non-technical executive audience. keep it light",
+    "should_trigger": true
+  },
+  {
+    "query": "2x2 matrix: x-axis is developer experience (low to high), y-axis is enterprise readiness (low to high). plot okta, auth0, ping identity, and entra id on it",
+    "should_trigger": true
+  },
+  {
+    "query": "create a timeline showing the evolution of enterprise identity: start with LDAP in 1993, hit saml, oauth, openid connect, then modern CIAM. visual format, not a list",
+    "should_trigger": true
+  },
+  {
+    "query": "can you find me stock photos of people at a conference for my blog post header? something professional",
+    "should_trigger": false
+  },
+  {
+    "query": "I have ~/Desktop/okta-logo.png and need to crop it to 400x400 and remove the white padding around the icon",
+    "should_trigger": false
+  },
+  {
+    "query": "write alt text for all the screenshots in my product docs folder at docs/images/ - there are about 15 of them",
+    "should_trigger": false
+  },
+  {
+    "query": "my team is debating between miro and lucidchart for our diagramming tool. whats the difference and which would you recommend for a 20-person eng team",
+    "should_trigger": false
+  },
+  {
+    "query": "explain what a sequence diagram is and when i'd use one instead of a flowchart - just a quick conceptual explanation",
+    "should_trigger": false
+  },
+  {
+    "query": "can you help me write the caption for a screenshot im about to paste - its a product UI showing the user management dashboard",
+    "should_trigger": false
+  },
+  {
+    "query": "i need to record a loom video walkthrough of our new SSO setup for the customer onboarding docs. any tips on what to cover?",
+    "should_trigger": false
+  },
+  {
+    "query": "convert my visio diagrams to editable powerpoint format - I have about 8 architecture diagrams from a legacy project",
+    "should_trigger": false
+  },
+  {
+    "query": "generate a 15-second animated logo reveal video for our product launch - we want the logo to fade in with some motion blur",
+    "should_trigger": false
+  },
+  {
+    "query": "what figma plugin would you recommend for auto-generating component documentation from my design file",
+    "should_trigger": false
+  }
+]

@@ -1,98 +1,19 @@
 ---
 name: deep-research
-description: "Deep research and analysis using Claude Sonnet with extended thinking via LiteLLM proxy. Use when: (1) the user asks a deep, complex, or multi-faceted question requiring thorough analysis, (2) researching a company for a sales account overview or prospect briefing, (3) any request containing 'deep research', 'research this', 'deep dive', 'thorough analysis', or 'account overview', (4) comparing technologies, architectures, or approaches in depth, (5) market research, competitive analysis, or industry landscape questions, (6) when a subagent needs deep analytical capability beyond web search. Triggers on: 'deep research', 'research', 'account overview', 'company research', 'deep dive', 'analyze thoroughly', 'competitive analysis', 'market research', or any question that requires synthesis across many data points."
+description: "Parallel specialist agent teams for comprehensive research with Gemini synthesis. Always uses the full agent team pipeline (4-6 parallel research agents + coverage gap check + Gemini cross-domain synthesis). Use when: (1) the user asks a deep, complex, or multi-faceted question requiring thorough analysis, (2) researching a company for a sales account overview or prospect briefing, (3) any request containing 'deep research', 'research this', 'deep dive', 'thorough analysis', or 'account overview', (4) comparing technologies, architectures, or approaches in depth, (5) market research, competitive analysis, or industry landscape questions, (6) when a subagent needs deep analytical capability beyond web search. Triggers on: 'deep research', 'research', 'account overview', 'company research', 'deep dive', 'analyze thoroughly', 'competitive analysis', 'market research', or any question that requires synthesis across many data points."
 ---
 
 # Deep Research
 
-Send complex queries to Claude Sonnet with extended thinking for thorough analysis via `scripts/research.py`. Uses extended thinking (8K token budget) for deeper analytical planning before writing. Routes through LiteLLM proxy using `LITELLM_API_KEY` and `LITELLM_BASE_URL` from `~/.claude-litellm.env`.
+Parallel specialist agent teams for comprehensive research, with Gemini synthesis. Every research request uses the full agent team pipeline — there is no "simple" mode.
 
-## Two Research Modes
+**Architecture:** Decompose the question into 4-6 research domains → dispatch parallel specialist agents (each scrapes the web independently) → check coverage gaps → synthesize all findings through Gemini's large context window → save to Obsidian vault.
 
-### General Research (`--mode general`)
-Deep analysis on any topic — technology, architecture, markets, trends. Returns structured markdown with findings, analysis, and recommendations.
+## Gemini Synthesis Script
 
-### Sales Account Overview (`--mode account`)
-Structured company research for SE prep — company overview, tech landscape, pain points, opportunity analysis, competitive positioning, and discovery questions.
+The `scripts/research.py` script sends gathered context to Claude Sonnet with extended thinking (8K token budget) for synthesis. Routes through LiteLLM proxy using `LITELLM_API_KEY` and `LITELLM_BASE_URL` from `~/.claude-litellm.env`.
 
-## Workflow
-
-### Simple: Direct Query
-```bash
-python3 scripts/research.py -q "Your research question" -o output.md
-```
-
-### With Context: Gather Then Analyze
-1. **Gather** — Use web search, firecrawl scraping, file reads to collect raw data
-2. **Analyze** — Feed gathered data as context to Gemini for synthesis:
-```bash
-python3 scripts/research.py \
-  -q "Synthesize findings on [topic]" \
-  -c scraped-page.md notes.md data.txt \
-  -o findings.md
-```
-
-### Account Overview
-```bash
-python3 scripts/research.py \
-  -q "Build account overview for Snowflake" \
-  --mode account \
-  -o accounts/snowflake.md
-```
-
-### Piped Input (from other tools)
-```bash
-curl -s https://example.com/about | python3 scripts/research.py -q "Analyze this company" --stdin
-```
-
-## Best Results Pattern
-
-For the deepest research, **gather context first** before calling the script. The firecrawl CLI is the preferred tool — it returns clean LLM-optimized markdown and handles JS-rendered pages.
-
-1. **Search + scrape in one shot** (preferred):
-   ```bash
-   firecrawl search "your query" --scrape --limit 5 -o .firecrawl/results.json --json
-   ```
-   The `--scrape` flag fetches full page content for each result — no separate scrape step needed.
-
-2. **Scrape a specific URL**:
-   ```bash
-   firecrawl scrape "https://example.com/page" -o .firecrawl/page.md
-   ```
-
-3. **Parallel scrapes** for multiple known URLs:
-   ```bash
-   firecrawl scrape "url1" -o .firecrawl/1.md &
-   firecrawl scrape "url2" -o .firecrawl/2.md &
-   firecrawl scrape "url3" -o .firecrawl/3.md &
-   wait
-   ```
-
-4. **Pass all context files** to Gemini with `-c` flag
-5. The more context Gemini has, the better the synthesis
-
-**Fallback**: If firecrawl is unavailable (not installed, out of credits), use `WebSearch` for discovery and `WebFetch` for specific URLs.
-
-Gemini 3.1 Pro has a massive context window — feed it everything relevant.
-
-## Subagent Usage
-
-Dispatch as a Task tool subagent for parallel research:
-```
-Task tool (general-purpose):
-  prompt: |
-    Run deep research:
-    python3 /path/to/scripts/research.py \
-      -q "Research question" \
-      --mode account \
-      --json
-
-    Parse the JSON result and summarize findings.
-```
-
-Use `--json` flag for structured output when parsing programmatically.
-
-## Script Reference
+**This script is used ONLY in Step 4 (synthesis) — never as the primary research method.** All research is done by parallel specialist agents first.
 
 ```
 python3 scripts/research.py [options]
@@ -141,22 +62,11 @@ project: [current project name or 'general-research']
 
 If the `-o` flag is not provided, default to the Obsidian path with an auto-generated filename based on the query.
 
-## Deep Mode (`--deep`)
+## How It Works
 
-### When to Trigger
+**Every research request follows this pipeline. There is no lightweight mode — the agent team approach is always used.**
 
-Deep mode activates when the user's message contains:
-- "deep dive on [topic]"
-- "deep research [topic]"
-- "research [topic] --deep"
-- "thorough deep dive [topic]"
-- "comprehensive research [topic]"
-
-Deep mode uses **parallel specialist agents** for web research, then **Gemini for synthesis** — combining Claude's web scraping capabilities with Gemini's large context window for cross-referencing. This is a hybrid approach inspired by how the major platforms do deep research (see [Design Rationale](#design-rationale) at the bottom).
-
-### How It Works
-
-#### Step 0: Generate Research Plan (show before dispatching)
+### Step 0: Generate Research Plan (show before dispatching)
 
 Before dispatching agents, decompose the question and present the plan to the user. This is inspired by how Gemini Deep Research works — showing the plan before executing lets the user redirect strategy before expensive retrieval operations begin.
 
@@ -183,7 +93,7 @@ Dispatching specialist agents now. (Reply to adjust domains before results come 
 
 Then proceed immediately — don't block on user confirmation. If the user responds with adjustments before agents finish, incorporate them in a second-pass round.
 
-#### Step 1: Dispatch Specialist Agents in Parallel
+### Step 1: Dispatch Specialist Agents in Parallel
 
 For each domain, dispatch a `general-purpose` subagent with `model: "sonnet"`:
 
@@ -270,7 +180,7 @@ Today's date: {TODAY_DATE}
 
 All agents run concurrently. Dispatch them all in a single message.
 
-#### Step 2: Extract Specialist Outputs from JSONL
+### Step 2: Extract Specialist Outputs from JSONL
 
 After all agents complete, extract their research text from the JSONL transcript files. Agents may hit the 32K output token limit and restart, producing multiple text blocks — the extraction must capture ALL of them, not just the longest one.
 
@@ -319,7 +229,7 @@ for name, agent_id in agents.items():
 "
 ```
 
-#### Step 3: Coverage Gap Check (adaptive second pass)
+### Step 3: Coverage Gap Check (adaptive second pass)
 
 Before synthesis, verify each domain produced substantive results. This is inspired by how Gemini checks coverage against its research plan — if a sub-topic is under-covered, it runs additional searches before synthesizing.
 
@@ -353,7 +263,7 @@ If any domains returned thin results (<1000 chars), dispatch a **second-pass age
 
 After second-pass agents complete, re-extract and merge their outputs into the existing domain files.
 
-#### Step 4: Synthesize with Gemini via LiteLLM
+### Step 4: Synthesize with Gemini via LiteLLM
 
 Concatenate all extracted specialist outputs into a single context file, then send to Gemini for synthesis:
 
@@ -386,7 +296,7 @@ Original question: {USER_QUERY}" \
 
 Gemini's large context window handles all specialist outputs in a single call — no timeout risk, no subagent turn limits.
 
-#### Step 5: Enhance and Write to Obsidian
+### Step 5: Enhance and Write to Obsidian
 
 After Gemini returns the synthesis:
 1. Read the output file
@@ -402,7 +312,7 @@ If Gemini synthesis fails (API error, rate limit), fall back to synthesizing dir
 
 ## Design Rationale
 
-This skill's deep mode is a hybrid architecture informed by how the major AI platforms implement deep research. Understanding these design choices helps explain why the skill works the way it does.
+This skill uses a hybrid multi-agent architecture informed by how the major AI platforms implement deep research. Understanding these design choices helps explain why the skill works the way it does.
 
 ### How the Platforms Do It
 

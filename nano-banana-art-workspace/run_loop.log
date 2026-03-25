@@ -1,0 +1,1577 @@
+Split: 12 train, 8 test (holdout=0.4)
+
+============================================================
+Iteration 1/5
+Description: Complete visual content system for Claude Code using Gemini Nano Banana image generation. Supports 16 content workflows (editorial, diagrams, mermaid, comics, sketchnotes, etc.), multiple brand aesthetics, and a bundled CLI tool with reference images, web search grounding, thinking levels, and creative variations. Use when the user wants to create visual content, illustrations, diagrams, header images, infographics, or any image generation task. Also triggers on "generate image", "create illustration", "make a diagram", "art", "visual", or any request involving image creation with Gemini/Nano Banana. Complements the gemini-image-gen skill with advanced workflows and aesthetic management.
+============================================================
+Train: 18/36 correct, precision=100% recall=0% accuracy=50% (189.3s)
+  [FAIL] rate=0/3 expected=True: I want a stat card for my case study: '73% of breaches invol
+  [FAIL] rate=0/3 expected=True: create a timeline showing the evolution of enterprise identi
+  [FAIL] rate=0/3 expected=True: make a side-by-side comparison visual of Okta vs Entra ID - 
+  [FAIL] rate=0/3 expected=True: create an architecture diagram for a CIAM deployment: Auth0 
+  [FAIL] rate=0/3 expected=True: hey i need a header image for my blog post about the 'identi
+  [FAIL] rate=0/3 expected=True: can you make me a flowchart showing the okta login flow? use
+  [PASS] rate=0/3 expected=False: I have ~/Desktop/okta-logo.png and need to crop it to 400x40
+  [PASS] rate=0/3 expected=False: generate a 15-second animated logo reveal video for our prod
+  [PASS] rate=0/3 expected=False: can you find me stock photos of people at a conference for m
+  [PASS] rate=0/3 expected=False: convert my visio diagrams to editable powerpoint format - I 
+  [PASS] rate=0/3 expected=False: i need to record a loom video walkthrough of our new SSO set
+  [PASS] rate=0/3 expected=False: what figma plugin would you recommend for auto-generating co
+Test : 12/24 correct, precision=100% recall=0% accuracy=50% (0.0s)
+  [FAIL] rate=0/3 expected=True: 3-panel comic strip explaining what a JWT token is - aimed a
+  [FAIL] rate=0/3 expected=True: need a hero banner for my newsletter, 1200x600. topic is 'wh
+  [FAIL] rate=0/3 expected=True: I took rough notes in my QBR with Salesforce today - can you
+  [FAIL] rate=0/3 expected=True: 2x2 matrix: x-axis is developer experience (low to high), y-
+  [PASS] rate=0/3 expected=False: my team is debating between miro and lucidchart for our diag
+  [PASS] rate=0/3 expected=False: can you help me write the caption for a screenshot im about 
+  [PASS] rate=0/3 expected=False: write alt text for all the screenshots in my product docs fo
+  [PASS] rate=0/3 expected=False: explain what a sequence diagram is and when i'd use one inst
+
+Improving description...
+Proposed (19.2s): Use for any request where the desired output is an IMAGE or VISUAL FILE — not text, not code. Key signal: the user wants something they can drop into a slide deck, blog post, or document as a graphic.
+
+Covers: architecture diagrams, flowcharts, timeline graphics, side-by-side comparison visuals, stat cards, header images, infographics, illustrations, sketchnotes, comics, quote cards, and any "make me a visual of X" request.
+
+Trigger on phrases like: "create a diagram", "make a visual", "header image", "flowchart", "timeline showing", "comparison visual", "stat card", "architecture diagram", "something I can put in a slide", or any request for a visual that communicates information.
+
+Supports 16 visual workflow types via Gemini image generation with aesthetic management.
+
+============================================================
+Iteration 2/5
+Description: Use for any request where the desired output is an IMAGE or VISUAL FILE — not text, not code. Key signal: the user wants something they can drop into a slide deck, blog post, or document as a graphic.
+
+Covers: architecture diagrams, flowcharts, timeline graphics, side-by-side comparison visuals, stat cards, header images, infographics, illustrations, sketchnotes, comics, quote cards, and any "make me a visual of X" request.
+
+Trigger on phrases like: "create a diagram", "make a visual", "header image", "flowchart", "timeline showing", "comparison visual", "stat card", "architecture diagram", "something I can put in a slide", or any request for a visual that communicates information.
+
+Supports 16 visual workflow types via Gemini image generation with aesthetic management.
+============================================================
+Train: 18/36 correct, precision=100% recall=0% accuracy=50% (190.4s)
+  [FAIL] rate=0/3 expected=True: create a timeline showing the evolution of enterprise identi
+  [FAIL] rate=0/3 expected=True: create an architecture diagram for a CIAM deployment: Auth0 
+  [FAIL] rate=0/3 expected=True: I want a stat card for my case study: '73% of breaches invol
+  [FAIL] rate=0/3 expected=True: make a side-by-side comparison visual of Okta vs Entra ID - 
+  [FAIL] rate=0/3 expected=True: hey i need a header image for my blog post about the 'identi
+  [FAIL] rate=0/3 expected=True: can you make me a flowchart showing the okta login flow? use
+  [PASS] rate=0/3 expected=False: I have ~/Desktop/okta-logo.png and need to crop it to 400x40
+  [PASS] rate=0/3 expected=False: generate a 15-second animated logo reveal video for our prod
+  [PASS] rate=0/3 expected=False: convert my visio diagrams to editable powerpoint format - I 
+  [PASS] rate=0/3 expected=False: can you find me stock photos of people at a conference for m
+  [PASS] rate=0/3 expected=False: i need to record a loom video walkthrough of our new SSO set
+  [PASS] rate=0/3 expected=False: what figma plugin would you recommend for auto-generating co
+Test : 12/24 correct, precision=100% recall=0% accuracy=50% (0.0s)
+  [FAIL] rate=0/3 expected=True: 3-panel comic strip explaining what a JWT token is - aimed a
+  [FAIL] rate=0/3 expected=True: need a hero banner for my newsletter, 1200x600. topic is 'wh
+  [FAIL] rate=0/3 expected=True: I took rough notes in my QBR with Salesforce today - can you
+  [FAIL] rate=0/3 expected=True: 2x2 matrix: x-axis is developer experience (low to high), y-
+  [PASS] rate=0/3 expected=False: my team is debating between miro and lucidchart for our diag
+  [PASS] rate=0/3 expected=False: can you help me write the caption for a screenshot im about 
+  [PASS] rate=0/3 expected=False: write alt text for all the screenshots in my product docs fo
+  [PASS] rate=0/3 expected=False: explain what a sequence diagram is and when i'd use one inst
+
+Improving description...
+Proposed (22.7s): Invoke this skill when the user wants to CREATE a new image or visual graphic from scratch. The output is an image file — a diagram, illustration, chart, or visual they can embed in a slide deck, document, or blog post.
+
+Trigger immediately on: architecture diagrams, flowcharts, timelines, side-by-side comparison visuals, stat cards, header images, infographics, sketchnotes, comics, quote cards. Also trigger on any phrasing like "make a visual of", "create a diagram", "I want a [type] image", "something I can put in a slide", or "visual format, not a list."
+
+The key signal is creation intent: the user is asking you to generate something that doesn't yet exist, and the desired artifact is visual rather than text or code.
+
+Do NOT use for: editing or cropping existing image files, creating videos or animations, finding stock photos, converting file formats, or recommending design tools.
+
+============================================================
+Iteration 3/5
+Description: Invoke this skill when the user wants to CREATE a new image or visual graphic from scratch. The output is an image file — a diagram, illustration, chart, or visual they can embed in a slide deck, document, or blog post.
+
+Trigger immediately on: architecture diagrams, flowcharts, timelines, side-by-side comparison visuals, stat cards, header images, infographics, sketchnotes, comics, quote cards. Also trigger on any phrasing like "make a visual of", "create a diagram", "I want a [type] image", "something I can put in a slide", or "visual format, not a list."
+
+The key signal is creation intent: the user is asking you to generate something that doesn't yet exist, and the desired artifact is visual rather than text or code.
+
+Do NOT use for: editing or cropping existing image files, creating videos or animations, finding stock photos, converting file formats, or recommending design tools.
+============================================================
+Train: 18/36 correct, precision=100% recall=0% accuracy=50% (190.3s)
+  [FAIL] rate=0/3 expected=True: I want a stat card for my case study: '73% of breaches invol
+  [FAIL] rate=0/3 expected=True: create an architecture diagram for a CIAM deployment: Auth0 
+  [FAIL] rate=0/3 expected=True: make a side-by-side comparison visual of Okta vs Entra ID - 
+  [FAIL] rate=0/3 expected=True: create a timeline showing the evolution of enterprise identi
+  [FAIL] rate=0/3 expected=True: hey i need a header image for my blog post about the 'identi
+  [PASS] rate=0/3 expected=False: I have ~/Desktop/okta-logo.png and need to crop it to 400x40
+  [FAIL] rate=0/3 expected=True: can you make me a flowchart showing the okta login flow? use
+  [PASS] rate=0/3 expected=False: generate a 15-second animated logo reveal video for our prod
+  [PASS] rate=0/3 expected=False: convert my visio diagrams to editable powerpoint format - I 
+  [PASS] rate=0/3 expected=False: can you find me stock photos of people at a conference for m
+  [PASS] rate=0/3 expected=False: i need to record a loom video walkthrough of our new SSO set
+  [PASS] rate=0/3 expected=False: what figma plugin would you recommend for auto-generating co
+Test : 12/24 correct, precision=100% recall=0% accuracy=50% (0.0s)
+  [FAIL] rate=0/3 expected=True: 3-panel comic strip explaining what a JWT token is - aimed a
+  [FAIL] rate=0/3 expected=True: need a hero banner for my newsletter, 1200x600. topic is 'wh
+  [FAIL] rate=0/3 expected=True: I took rough notes in my QBR with Salesforce today - can you
+  [FAIL] rate=0/3 expected=True: 2x2 matrix: x-axis is developer experience (low to high), y-
+  [PASS] rate=0/3 expected=False: my team is debating between miro and lucidchart for our diag
+  [PASS] rate=0/3 expected=False: can you help me write the caption for a screenshot im about 
+  [PASS] rate=0/3 expected=False: write alt text for all the screenshots in my product docs fo
+  [PASS] rate=0/3 expected=False: explain what a sequence diagram is and when i'd use one inst
+
+Improving description...
+Proposed (24.4s): Generates image files on demand. Use this skill when a user asks for any graphic created from scratch: flowcharts, architecture diagrams, timelines, comparison visuals, stat cards, header images, infographics, illustrations, sketchnotes, comics, or quote cards — anything they want to embed in slides, documents, or blog posts.
+
+The defining signal: the desired artifact IS an image file, not text describing a concept or code that renders a diagram. The user wants a visual they can drop somewhere.
+
+Not for: editing or cropping existing image files, video or animation, finding stock photos, converting file formats, or recommending design tools.
+
+============================================================
+Iteration 4/5
+Description: Generates image files on demand. Use this skill when a user asks for any graphic created from scratch: flowcharts, architecture diagrams, timelines, comparison visuals, stat cards, header images, infographics, illustrations, sketchnotes, comics, or quote cards — anything they want to embed in slides, documents, or blog posts.
+
+The defining signal: the desired artifact IS an image file, not text describing a concept or code that renders a diagram. The user wants a visual they can drop somewhere.
+
+Not for: editing or cropping existing image files, video or animation, finding stock photos, converting file formats, or recommending design tools.
+============================================================
+Train: 18/36 correct, precision=100% recall=0% accuracy=50% (190.2s)
+  [FAIL] rate=0/3 expected=True: create a timeline showing the evolution of enterprise identi
+  [FAIL] rate=0/3 expected=True: create an architecture diagram for a CIAM deployment: Auth0 
+  [FAIL] rate=0/3 expected=True: I want a stat card for my case study: '73% of breaches invol
+  [FAIL] rate=0/3 expected=True: make a side-by-side comparison visual of Okta vs Entra ID - 
+  [FAIL] rate=0/3 expected=True: hey i need a header image for my blog post about the 'identi
+  [FAIL] rate=0/3 expected=True: can you make me a flowchart showing the okta login flow? use
+  [PASS] rate=0/3 expected=False: I have ~/Desktop/okta-logo.png and need to crop it to 400x40
+  [PASS] rate=0/3 expected=False: generate a 15-second animated logo reveal video for our prod
+  [PASS] rate=0/3 expected=False: convert my visio diagrams to editable powerpoint format - I 
+  [PASS] rate=0/3 expected=False: can you find me stock photos of people at a conference for m
+  [PASS] rate=0/3 expected=False: i need to record a loom video walkthrough of our new SSO set
+  [PASS] rate=0/3 expected=False: what figma plugin would you recommend for auto-generating co
+Test : 12/24 correct, precision=100% recall=0% accuracy=50% (0.0s)
+  [FAIL] rate=0/3 expected=True: 3-panel comic strip explaining what a JWT token is - aimed a
+  [FAIL] rate=0/3 expected=True: need a hero banner for my newsletter, 1200x600. topic is 'wh
+  [FAIL] rate=0/3 expected=True: I took rough notes in my QBR with Salesforce today - can you
+  [FAIL] rate=0/3 expected=True: 2x2 matrix: x-axis is developer experience (low to high), y-
+  [PASS] rate=0/3 expected=False: my team is debating between miro and lucidchart for our diag
+  [PASS] rate=0/3 expected=False: can you help me write the caption for a screenshot im about 
+  [PASS] rate=0/3 expected=False: write alt text for all the screenshots in my product docs fo
+  [PASS] rate=0/3 expected=False: explain what a sequence diagram is and when i'd use one inst
+
+Improving description...
+Proposed (27.3s): Invoke immediately when a user asks for a new image, graphic, or visual file to be created. This skill uses AI image generation to produce real PNG/JPG files — flowcharts, architecture diagrams, timelines, comparison visuals, stat cards, header images, infographics, illustrations, sketchnotes, comics, or any "make me a visual" request. Required whenever the output must be an actual image file the user can save, embed, or drop into a deck or document, rather than text or rendered code. Not for: editing existing image files, video or animation, finding stock photos, converting file formats, or recommending design tools.
+
+============================================================
+Iteration 5/5
+Description: Invoke immediately when a user asks for a new image, graphic, or visual file to be created. This skill uses AI image generation to produce real PNG/JPG files — flowcharts, architecture diagrams, timelines, comparison visuals, stat cards, header images, infographics, illustrations, sketchnotes, comics, or any "make me a visual" request. Required whenever the output must be an actual image file the user can save, embed, or drop into a deck or document, rather than text or rendered code. Not for: editing existing image files, video or animation, finding stock photos, converting file formats, or recommending design tools.
+============================================================
+Train: 18/36 correct, precision=100% recall=0% accuracy=50% (194.9s)
+  [FAIL] rate=0/3 expected=True: create an architecture diagram for a CIAM deployment: Auth0 
+  [FAIL] rate=0/3 expected=True: create a timeline showing the evolution of enterprise identi
+  [FAIL] rate=0/3 expected=True: I want a stat card for my case study: '73% of breaches invol
+  [FAIL] rate=0/3 expected=True: make a side-by-side comparison visual of Okta vs Entra ID - 
+  [FAIL] rate=0/3 expected=True: hey i need a header image for my blog post about the 'identi
+  [FAIL] rate=0/3 expected=True: can you make me a flowchart showing the okta login flow? use
+  [PASS] rate=0/3 expected=False: I have ~/Desktop/okta-logo.png and need to crop it to 400x40
+  [PASS] rate=0/3 expected=False: convert my visio diagrams to editable powerpoint format - I 
+  [PASS] rate=0/3 expected=False: generate a 15-second animated logo reveal video for our prod
+  [PASS] rate=0/3 expected=False: can you find me stock photos of people at a conference for m
+  [PASS] rate=0/3 expected=False: i need to record a loom video walkthrough of our new SSO set
+  [PASS] rate=0/3 expected=False: what figma plugin would you recommend for auto-generating co
+Test : 12/24 correct, precision=100% recall=0% accuracy=50% (0.0s)
+  [FAIL] rate=0/3 expected=True: 3-panel comic strip explaining what a JWT token is - aimed a
+  [FAIL] rate=0/3 expected=True: need a hero banner for my newsletter, 1200x600. topic is 'wh
+  [FAIL] rate=0/3 expected=True: I took rough notes in my QBR with Salesforce today - can you
+  [FAIL] rate=0/3 expected=True: 2x2 matrix: x-axis is developer experience (low to high), y-
+  [PASS] rate=0/3 expected=False: my team is debating between miro and lucidchart for our diag
+  [PASS] rate=0/3 expected=False: can you help me write the caption for a screenshot im about 
+  [PASS] rate=0/3 expected=False: write alt text for all the screenshots in my product docs fo
+  [PASS] rate=0/3 expected=False: explain what a sequence diagram is and when i'd use one inst
+
+Max iterations reached (5).
+
+Exit reason: max_iterations (5)
+Best score: 4/8 (iteration 1)
+{
+  "exit_reason": "max_iterations (5)",
+  "original_description": "Complete visual content system for Claude Code using Gemini Nano Banana image generation. Supports 16 content workflows (editorial, diagrams, mermaid, comics, sketchnotes, etc.), multiple brand aesthetics, and a bundled CLI tool with reference images, web search grounding, thinking levels, and creative variations. Use when the user wants to create visual content, illustrations, diagrams, header images, infographics, or any image generation task. Also triggers on \"generate image\", \"create illustration\", \"make a diagram\", \"art\", \"visual\", or any request involving image creation with Gemini/Nano Banana. Complements the gemini-image-gen skill with advanced workflows and aesthetic management.",
+  "best_description": "Complete visual content system for Claude Code using Gemini Nano Banana image generation. Supports 16 content workflows (editorial, diagrams, mermaid, comics, sketchnotes, etc.), multiple brand aesthetics, and a bundled CLI tool with reference images, web search grounding, thinking levels, and creative variations. Use when the user wants to create visual content, illustrations, diagrams, header images, infographics, or any image generation task. Also triggers on \"generate image\", \"create illustration\", \"make a diagram\", \"art\", \"visual\", or any request involving image creation with Gemini/Nano Banana. Complements the gemini-image-gen skill with advanced workflows and aesthetic management.",
+  "best_score": "4/8",
+  "best_train_score": "6/12",
+  "best_test_score": "4/8",
+  "final_description": "Invoke immediately when a user asks for a new image, graphic, or visual file to be created. This skill uses AI image generation to produce real PNG/JPG files \u2014 flowcharts, architecture diagrams, timelines, comparison visuals, stat cards, header images, infographics, illustrations, sketchnotes, comics, or any \"make me a visual\" request. Required whenever the output must be an actual image file the user can save, embed, or drop into a deck or document, rather than text or rendered code. Not for: editing existing image files, video or animation, finding stock photos, converting file formats, or recommending design tools.",
+  "iterations_run": 5,
+  "holdout": 0.4,
+  "train_size": 12,
+  "test_size": 8,
+  "history": [
+    {
+      "iteration": 1,
+      "description": "Complete visual content system for Claude Code using Gemini Nano Banana image generation. Supports 16 content workflows (editorial, diagrams, mermaid, comics, sketchnotes, etc.), multiple brand aesthetics, and a bundled CLI tool with reference images, web search grounding, thinking levels, and creative variations. Use when the user wants to create visual content, illustrations, diagrams, header images, infographics, or any image generation task. Also triggers on \"generate image\", \"create illustration\", \"make a diagram\", \"art\", \"visual\", or any request involving image creation with Gemini/Nano Banana. Complements the gemini-image-gen skill with advanced workflows and aesthetic management.",
+      "train_passed": 6,
+      "train_failed": 6,
+      "train_total": 12,
+      "train_results": [
+        {
+          "query": "I want a stat card for my case study: '73% of breaches involve compromised credentials'. big number, punchy, something i can drop into a slide",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "create a timeline showing the evolution of enterprise identity: start with LDAP in 1993, hit saml, oauth, openid connect, then modern CIAM. visual format, not a list",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "make a side-by-side comparison visual of Okta vs Entra ID - feature coverage, pricing model, developer experience. going in a competitive deck for a prospect",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "create an architecture diagram for a CIAM deployment: Auth0 tenant in the middle, 3 customer-facing apps on the right, downstream user store + analytics on the left, with arrows showing the token flow",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "hey i need a header image for my blog post about the 'identity sprawl problem' in enterprise - something that shows like a messy tangle of user accounts across too many apps",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "can you make me a flowchart showing the okta login flow? user hits the app, gets redirected to okta, does MFA, then lands back. want it clean enough to put in a slide deck",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "I have ~/Desktop/okta-logo.png and need to crop it to 400x400 and remove the white padding around the icon",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "generate a 15-second animated logo reveal video for our product launch - we want the logo to fade in with some motion blur",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "can you find me stock photos of people at a conference for my blog post header? something professional",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "convert my visio diagrams to editable powerpoint format - I have about 8 architecture diagrams from a legacy project",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "i need to record a loom video walkthrough of our new SSO setup for the customer onboarding docs. any tips on what to cover?",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "what figma plugin would you recommend for auto-generating component documentation from my design file",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ],
+      "test_passed": 4,
+      "test_failed": 4,
+      "test_total": 8,
+      "test_results": [
+        {
+          "query": "3-panel comic strip explaining what a JWT token is - aimed at a non-technical executive audience. keep it light",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "need a hero banner for my newsletter, 1200x600. topic is 'why passwordless is winning in 2026'. something that feels modern and not generic stock-photo-y",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "I took rough notes in my QBR with Salesforce today - can you turn them into a sketchnote visual I can share with the account team on slack",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "2x2 matrix: x-axis is developer experience (low to high), y-axis is enterprise readiness (low to high). plot okta, auth0, ping identity, and entra id on it",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "my team is debating between miro and lucidchart for our diagramming tool. whats the difference and which would you recommend for a 20-person eng team",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "can you help me write the caption for a screenshot im about to paste - its a product UI showing the user management dashboard",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "write alt text for all the screenshots in my product docs folder at docs/images/ - there are about 15 of them",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "explain what a sequence diagram is and when i'd use one instead of a flowchart - just a quick conceptual explanation",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ],
+      "passed": 6,
+      "failed": 6,
+      "total": 12,
+      "results": [
+        {
+          "query": "I want a stat card for my case study: '73% of breaches involve compromised credentials'. big number, punchy, something i can drop into a slide",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "create a timeline showing the evolution of enterprise identity: start with LDAP in 1993, hit saml, oauth, openid connect, then modern CIAM. visual format, not a list",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "make a side-by-side comparison visual of Okta vs Entra ID - feature coverage, pricing model, developer experience. going in a competitive deck for a prospect",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "create an architecture diagram for a CIAM deployment: Auth0 tenant in the middle, 3 customer-facing apps on the right, downstream user store + analytics on the left, with arrows showing the token flow",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "hey i need a header image for my blog post about the 'identity sprawl problem' in enterprise - something that shows like a messy tangle of user accounts across too many apps",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "can you make me a flowchart showing the okta login flow? user hits the app, gets redirected to okta, does MFA, then lands back. want it clean enough to put in a slide deck",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "I have ~/Desktop/okta-logo.png and need to crop it to 400x400 and remove the white padding around the icon",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "generate a 15-second animated logo reveal video for our product launch - we want the logo to fade in with some motion blur",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "can you find me stock photos of people at a conference for my blog post header? something professional",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "convert my visio diagrams to editable powerpoint format - I have about 8 architecture diagrams from a legacy project",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "i need to record a loom video walkthrough of our new SSO setup for the customer onboarding docs. any tips on what to cover?",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "what figma plugin would you recommend for auto-generating component documentation from my design file",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ]
+    },
+    {
+      "iteration": 2,
+      "description": "Use for any request where the desired output is an IMAGE or VISUAL FILE \u2014 not text, not code. Key signal: the user wants something they can drop into a slide deck, blog post, or document as a graphic.\n\nCovers: architecture diagrams, flowcharts, timeline graphics, side-by-side comparison visuals, stat cards, header images, infographics, illustrations, sketchnotes, comics, quote cards, and any \"make me a visual of X\" request.\n\nTrigger on phrases like: \"create a diagram\", \"make a visual\", \"header image\", \"flowchart\", \"timeline showing\", \"comparison visual\", \"stat card\", \"architecture diagram\", \"something I can put in a slide\", or any request for a visual that communicates information.\n\nSupports 16 visual workflow types via Gemini image generation with aesthetic management.",
+      "train_passed": 6,
+      "train_failed": 6,
+      "train_total": 12,
+      "train_results": [
+        {
+          "query": "create a timeline showing the evolution of enterprise identity: start with LDAP in 1993, hit saml, oauth, openid connect, then modern CIAM. visual format, not a list",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "create an architecture diagram for a CIAM deployment: Auth0 tenant in the middle, 3 customer-facing apps on the right, downstream user store + analytics on the left, with arrows showing the token flow",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "I want a stat card for my case study: '73% of breaches involve compromised credentials'. big number, punchy, something i can drop into a slide",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "make a side-by-side comparison visual of Okta vs Entra ID - feature coverage, pricing model, developer experience. going in a competitive deck for a prospect",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "hey i need a header image for my blog post about the 'identity sprawl problem' in enterprise - something that shows like a messy tangle of user accounts across too many apps",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "can you make me a flowchart showing the okta login flow? user hits the app, gets redirected to okta, does MFA, then lands back. want it clean enough to put in a slide deck",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "I have ~/Desktop/okta-logo.png and need to crop it to 400x400 and remove the white padding around the icon",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "generate a 15-second animated logo reveal video for our product launch - we want the logo to fade in with some motion blur",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "convert my visio diagrams to editable powerpoint format - I have about 8 architecture diagrams from a legacy project",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "can you find me stock photos of people at a conference for my blog post header? something professional",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "i need to record a loom video walkthrough of our new SSO setup for the customer onboarding docs. any tips on what to cover?",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "what figma plugin would you recommend for auto-generating component documentation from my design file",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ],
+      "test_passed": 4,
+      "test_failed": 4,
+      "test_total": 8,
+      "test_results": [
+        {
+          "query": "3-panel comic strip explaining what a JWT token is - aimed at a non-technical executive audience. keep it light",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "need a hero banner for my newsletter, 1200x600. topic is 'why passwordless is winning in 2026'. something that feels modern and not generic stock-photo-y",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "I took rough notes in my QBR with Salesforce today - can you turn them into a sketchnote visual I can share with the account team on slack",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "2x2 matrix: x-axis is developer experience (low to high), y-axis is enterprise readiness (low to high). plot okta, auth0, ping identity, and entra id on it",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "my team is debating between miro and lucidchart for our diagramming tool. whats the difference and which would you recommend for a 20-person eng team",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "can you help me write the caption for a screenshot im about to paste - its a product UI showing the user management dashboard",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "write alt text for all the screenshots in my product docs folder at docs/images/ - there are about 15 of them",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "explain what a sequence diagram is and when i'd use one instead of a flowchart - just a quick conceptual explanation",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ],
+      "passed": 6,
+      "failed": 6,
+      "total": 12,
+      "results": [
+        {
+          "query": "create a timeline showing the evolution of enterprise identity: start with LDAP in 1993, hit saml, oauth, openid connect, then modern CIAM. visual format, not a list",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "create an architecture diagram for a CIAM deployment: Auth0 tenant in the middle, 3 customer-facing apps on the right, downstream user store + analytics on the left, with arrows showing the token flow",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "I want a stat card for my case study: '73% of breaches involve compromised credentials'. big number, punchy, something i can drop into a slide",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "make a side-by-side comparison visual of Okta vs Entra ID - feature coverage, pricing model, developer experience. going in a competitive deck for a prospect",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "hey i need a header image for my blog post about the 'identity sprawl problem' in enterprise - something that shows like a messy tangle of user accounts across too many apps",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "can you make me a flowchart showing the okta login flow? user hits the app, gets redirected to okta, does MFA, then lands back. want it clean enough to put in a slide deck",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "I have ~/Desktop/okta-logo.png and need to crop it to 400x400 and remove the white padding around the icon",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "generate a 15-second animated logo reveal video for our product launch - we want the logo to fade in with some motion blur",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "convert my visio diagrams to editable powerpoint format - I have about 8 architecture diagrams from a legacy project",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "can you find me stock photos of people at a conference for my blog post header? something professional",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "i need to record a loom video walkthrough of our new SSO setup for the customer onboarding docs. any tips on what to cover?",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "what figma plugin would you recommend for auto-generating component documentation from my design file",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ]
+    },
+    {
+      "iteration": 3,
+      "description": "Invoke this skill when the user wants to CREATE a new image or visual graphic from scratch. The output is an image file \u2014 a diagram, illustration, chart, or visual they can embed in a slide deck, document, or blog post.\n\nTrigger immediately on: architecture diagrams, flowcharts, timelines, side-by-side comparison visuals, stat cards, header images, infographics, sketchnotes, comics, quote cards. Also trigger on any phrasing like \"make a visual of\", \"create a diagram\", \"I want a [type] image\", \"something I can put in a slide\", or \"visual format, not a list.\"\n\nThe key signal is creation intent: the user is asking you to generate something that doesn't yet exist, and the desired artifact is visual rather than text or code.\n\nDo NOT use for: editing or cropping existing image files, creating videos or animations, finding stock photos, converting file formats, or recommending design tools.",
+      "train_passed": 6,
+      "train_failed": 6,
+      "train_total": 12,
+      "train_results": [
+        {
+          "query": "I want a stat card for my case study: '73% of breaches involve compromised credentials'. big number, punchy, something i can drop into a slide",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "create an architecture diagram for a CIAM deployment: Auth0 tenant in the middle, 3 customer-facing apps on the right, downstream user store + analytics on the left, with arrows showing the token flow",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "make a side-by-side comparison visual of Okta vs Entra ID - feature coverage, pricing model, developer experience. going in a competitive deck for a prospect",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "create a timeline showing the evolution of enterprise identity: start with LDAP in 1993, hit saml, oauth, openid connect, then modern CIAM. visual format, not a list",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "hey i need a header image for my blog post about the 'identity sprawl problem' in enterprise - something that shows like a messy tangle of user accounts across too many apps",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "I have ~/Desktop/okta-logo.png and need to crop it to 400x400 and remove the white padding around the icon",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "can you make me a flowchart showing the okta login flow? user hits the app, gets redirected to okta, does MFA, then lands back. want it clean enough to put in a slide deck",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "generate a 15-second animated logo reveal video for our product launch - we want the logo to fade in with some motion blur",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "convert my visio diagrams to editable powerpoint format - I have about 8 architecture diagrams from a legacy project",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "can you find me stock photos of people at a conference for my blog post header? something professional",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "i need to record a loom video walkthrough of our new SSO setup for the customer onboarding docs. any tips on what to cover?",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "what figma plugin would you recommend for auto-generating component documentation from my design file",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ],
+      "test_passed": 4,
+      "test_failed": 4,
+      "test_total": 8,
+      "test_results": [
+        {
+          "query": "3-panel comic strip explaining what a JWT token is - aimed at a non-technical executive audience. keep it light",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "need a hero banner for my newsletter, 1200x600. topic is 'why passwordless is winning in 2026'. something that feels modern and not generic stock-photo-y",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "I took rough notes in my QBR with Salesforce today - can you turn them into a sketchnote visual I can share with the account team on slack",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "2x2 matrix: x-axis is developer experience (low to high), y-axis is enterprise readiness (low to high). plot okta, auth0, ping identity, and entra id on it",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "my team is debating between miro and lucidchart for our diagramming tool. whats the difference and which would you recommend for a 20-person eng team",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "can you help me write the caption for a screenshot im about to paste - its a product UI showing the user management dashboard",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "write alt text for all the screenshots in my product docs folder at docs/images/ - there are about 15 of them",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "explain what a sequence diagram is and when i'd use one instead of a flowchart - just a quick conceptual explanation",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ],
+      "passed": 6,
+      "failed": 6,
+      "total": 12,
+      "results": [
+        {
+          "query": "I want a stat card for my case study: '73% of breaches involve compromised credentials'. big number, punchy, something i can drop into a slide",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "create an architecture diagram for a CIAM deployment: Auth0 tenant in the middle, 3 customer-facing apps on the right, downstream user store + analytics on the left, with arrows showing the token flow",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "make a side-by-side comparison visual of Okta vs Entra ID - feature coverage, pricing model, developer experience. going in a competitive deck for a prospect",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "create a timeline showing the evolution of enterprise identity: start with LDAP in 1993, hit saml, oauth, openid connect, then modern CIAM. visual format, not a list",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "hey i need a header image for my blog post about the 'identity sprawl problem' in enterprise - something that shows like a messy tangle of user accounts across too many apps",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "I have ~/Desktop/okta-logo.png and need to crop it to 400x400 and remove the white padding around the icon",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "can you make me a flowchart showing the okta login flow? user hits the app, gets redirected to okta, does MFA, then lands back. want it clean enough to put in a slide deck",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "generate a 15-second animated logo reveal video for our product launch - we want the logo to fade in with some motion blur",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "convert my visio diagrams to editable powerpoint format - I have about 8 architecture diagrams from a legacy project",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "can you find me stock photos of people at a conference for my blog post header? something professional",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "i need to record a loom video walkthrough of our new SSO setup for the customer onboarding docs. any tips on what to cover?",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "what figma plugin would you recommend for auto-generating component documentation from my design file",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ]
+    },
+    {
+      "iteration": 4,
+      "description": "Generates image files on demand. Use this skill when a user asks for any graphic created from scratch: flowcharts, architecture diagrams, timelines, comparison visuals, stat cards, header images, infographics, illustrations, sketchnotes, comics, or quote cards \u2014 anything they want to embed in slides, documents, or blog posts.\n\nThe defining signal: the desired artifact IS an image file, not text describing a concept or code that renders a diagram. The user wants a visual they can drop somewhere.\n\nNot for: editing or cropping existing image files, video or animation, finding stock photos, converting file formats, or recommending design tools.",
+      "train_passed": 6,
+      "train_failed": 6,
+      "train_total": 12,
+      "train_results": [
+        {
+          "query": "create a timeline showing the evolution of enterprise identity: start with LDAP in 1993, hit saml, oauth, openid connect, then modern CIAM. visual format, not a list",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "create an architecture diagram for a CIAM deployment: Auth0 tenant in the middle, 3 customer-facing apps on the right, downstream user store + analytics on the left, with arrows showing the token flow",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "I want a stat card for my case study: '73% of breaches involve compromised credentials'. big number, punchy, something i can drop into a slide",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "make a side-by-side comparison visual of Okta vs Entra ID - feature coverage, pricing model, developer experience. going in a competitive deck for a prospect",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "hey i need a header image for my blog post about the 'identity sprawl problem' in enterprise - something that shows like a messy tangle of user accounts across too many apps",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "can you make me a flowchart showing the okta login flow? user hits the app, gets redirected to okta, does MFA, then lands back. want it clean enough to put in a slide deck",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "I have ~/Desktop/okta-logo.png and need to crop it to 400x400 and remove the white padding around the icon",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "generate a 15-second animated logo reveal video for our product launch - we want the logo to fade in with some motion blur",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "convert my visio diagrams to editable powerpoint format - I have about 8 architecture diagrams from a legacy project",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "can you find me stock photos of people at a conference for my blog post header? something professional",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "i need to record a loom video walkthrough of our new SSO setup for the customer onboarding docs. any tips on what to cover?",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "what figma plugin would you recommend for auto-generating component documentation from my design file",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ],
+      "test_passed": 4,
+      "test_failed": 4,
+      "test_total": 8,
+      "test_results": [
+        {
+          "query": "3-panel comic strip explaining what a JWT token is - aimed at a non-technical executive audience. keep it light",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "need a hero banner for my newsletter, 1200x600. topic is 'why passwordless is winning in 2026'. something that feels modern and not generic stock-photo-y",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "I took rough notes in my QBR with Salesforce today - can you turn them into a sketchnote visual I can share with the account team on slack",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "2x2 matrix: x-axis is developer experience (low to high), y-axis is enterprise readiness (low to high). plot okta, auth0, ping identity, and entra id on it",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "my team is debating between miro and lucidchart for our diagramming tool. whats the difference and which would you recommend for a 20-person eng team",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "can you help me write the caption for a screenshot im about to paste - its a product UI showing the user management dashboard",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "write alt text for all the screenshots in my product docs folder at docs/images/ - there are about 15 of them",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "explain what a sequence diagram is and when i'd use one instead of a flowchart - just a quick conceptual explanation",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ],
+      "passed": 6,
+      "failed": 6,
+      "total": 12,
+      "results": [
+        {
+          "query": "create a timeline showing the evolution of enterprise identity: start with LDAP in 1993, hit saml, oauth, openid connect, then modern CIAM. visual format, not a list",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "create an architecture diagram for a CIAM deployment: Auth0 tenant in the middle, 3 customer-facing apps on the right, downstream user store + analytics on the left, with arrows showing the token flow",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "I want a stat card for my case study: '73% of breaches involve compromised credentials'. big number, punchy, something i can drop into a slide",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "make a side-by-side comparison visual of Okta vs Entra ID - feature coverage, pricing model, developer experience. going in a competitive deck for a prospect",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "hey i need a header image for my blog post about the 'identity sprawl problem' in enterprise - something that shows like a messy tangle of user accounts across too many apps",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "can you make me a flowchart showing the okta login flow? user hits the app, gets redirected to okta, does MFA, then lands back. want it clean enough to put in a slide deck",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "I have ~/Desktop/okta-logo.png and need to crop it to 400x400 and remove the white padding around the icon",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "generate a 15-second animated logo reveal video for our product launch - we want the logo to fade in with some motion blur",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "convert my visio diagrams to editable powerpoint format - I have about 8 architecture diagrams from a legacy project",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "can you find me stock photos of people at a conference for my blog post header? something professional",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "i need to record a loom video walkthrough of our new SSO setup for the customer onboarding docs. any tips on what to cover?",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "what figma plugin would you recommend for auto-generating component documentation from my design file",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ]
+    },
+    {
+      "iteration": 5,
+      "description": "Invoke immediately when a user asks for a new image, graphic, or visual file to be created. This skill uses AI image generation to produce real PNG/JPG files \u2014 flowcharts, architecture diagrams, timelines, comparison visuals, stat cards, header images, infographics, illustrations, sketchnotes, comics, or any \"make me a visual\" request. Required whenever the output must be an actual image file the user can save, embed, or drop into a deck or document, rather than text or rendered code. Not for: editing existing image files, video or animation, finding stock photos, converting file formats, or recommending design tools.",
+      "train_passed": 6,
+      "train_failed": 6,
+      "train_total": 12,
+      "train_results": [
+        {
+          "query": "create an architecture diagram for a CIAM deployment: Auth0 tenant in the middle, 3 customer-facing apps on the right, downstream user store + analytics on the left, with arrows showing the token flow",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "create a timeline showing the evolution of enterprise identity: start with LDAP in 1993, hit saml, oauth, openid connect, then modern CIAM. visual format, not a list",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "I want a stat card for my case study: '73% of breaches involve compromised credentials'. big number, punchy, something i can drop into a slide",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "make a side-by-side comparison visual of Okta vs Entra ID - feature coverage, pricing model, developer experience. going in a competitive deck for a prospect",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "hey i need a header image for my blog post about the 'identity sprawl problem' in enterprise - something that shows like a messy tangle of user accounts across too many apps",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "can you make me a flowchart showing the okta login flow? user hits the app, gets redirected to okta, does MFA, then lands back. want it clean enough to put in a slide deck",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "I have ~/Desktop/okta-logo.png and need to crop it to 400x400 and remove the white padding around the icon",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "convert my visio diagrams to editable powerpoint format - I have about 8 architecture diagrams from a legacy project",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "generate a 15-second animated logo reveal video for our product launch - we want the logo to fade in with some motion blur",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "can you find me stock photos of people at a conference for my blog post header? something professional",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "i need to record a loom video walkthrough of our new SSO setup for the customer onboarding docs. any tips on what to cover?",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "what figma plugin would you recommend for auto-generating component documentation from my design file",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ],
+      "test_passed": 4,
+      "test_failed": 4,
+      "test_total": 8,
+      "test_results": [
+        {
+          "query": "3-panel comic strip explaining what a JWT token is - aimed at a non-technical executive audience. keep it light",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "need a hero banner for my newsletter, 1200x600. topic is 'why passwordless is winning in 2026'. something that feels modern and not generic stock-photo-y",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "I took rough notes in my QBR with Salesforce today - can you turn them into a sketchnote visual I can share with the account team on slack",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "2x2 matrix: x-axis is developer experience (low to high), y-axis is enterprise readiness (low to high). plot okta, auth0, ping identity, and entra id on it",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "my team is debating between miro and lucidchart for our diagramming tool. whats the difference and which would you recommend for a 20-person eng team",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "can you help me write the caption for a screenshot im about to paste - its a product UI showing the user management dashboard",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "write alt text for all the screenshots in my product docs folder at docs/images/ - there are about 15 of them",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "explain what a sequence diagram is and when i'd use one instead of a flowchart - just a quick conceptual explanation",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ],
+      "passed": 6,
+      "failed": 6,
+      "total": 12,
+      "results": [
+        {
+          "query": "create an architecture diagram for a CIAM deployment: Auth0 tenant in the middle, 3 customer-facing apps on the right, downstream user store + analytics on the left, with arrows showing the token flow",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "create a timeline showing the evolution of enterprise identity: start with LDAP in 1993, hit saml, oauth, openid connect, then modern CIAM. visual format, not a list",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "I want a stat card for my case study: '73% of breaches involve compromised credentials'. big number, punchy, something i can drop into a slide",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "make a side-by-side comparison visual of Okta vs Entra ID - feature coverage, pricing model, developer experience. going in a competitive deck for a prospect",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "hey i need a header image for my blog post about the 'identity sprawl problem' in enterprise - something that shows like a messy tangle of user accounts across too many apps",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "can you make me a flowchart showing the okta login flow? user hits the app, gets redirected to okta, does MFA, then lands back. want it clean enough to put in a slide deck",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "I have ~/Desktop/okta-logo.png and need to crop it to 400x400 and remove the white padding around the icon",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "convert my visio diagrams to editable powerpoint format - I have about 8 architecture diagrams from a legacy project",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "generate a 15-second animated logo reveal video for our product launch - we want the logo to fade in with some motion blur",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "can you find me stock photos of people at a conference for my blog post header? something professional",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "i need to record a loom video walkthrough of our new SSO setup for the customer onboarding docs. any tips on what to cover?",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "what figma plugin would you recommend for auto-generating component documentation from my design file",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ]
+    }
+  ]
+}
+Report: /var/folders/kn/_vv9bsw12hs3dy__lm4hrr000000gp/T/skill_description_report_nano-banana-art_20260321_185315.html
+

@@ -1,6 +1,6 @@
 ---
 name: nano-banana-art
-description: Complete visual content system for Claude Code using Gemini Nano Banana image generation. Supports 16 content workflows (editorial, diagrams, mermaid, comics, sketchnotes, etc.), multiple brand aesthetics, and a bundled CLI tool with reference images, web search grounding, thinking levels, and creative variations. Use when the user wants to create visual content, illustrations, diagrams, header images, infographics, or any image generation task. Also triggers on "generate image", "create illustration", "make a diagram", "art", "visual", or any request involving image creation with Gemini/Nano Banana. Complements the gemini-image-gen skill with advanced workflows and aesthetic management.
+description: Invoke immediately when a user asks for a new image, graphic, or visual file to be created. This skill uses AI image generation to produce real PNG/JPG files — flowcharts, architecture diagrams, timelines, comparison visuals, stat cards, header images, infographics, illustrations, sketchnotes, comics, or any "make me a visual" request. Required whenever the output must be an actual image file the user can save, embed, or drop into a deck or document, rather than text or rendered code. Not for: editing existing image files, video or animation, finding stock photos, converting file formats, or recommending design tools.
 user-invocable: true
 triggers:
   - USE WHEN user wants to create visual content, illustrations, or diagrams
