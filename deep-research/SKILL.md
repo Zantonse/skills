@@ -70,17 +70,17 @@ If the `-o` flag is not provided, default to the Obsidian path with an auto-gene
 
 Before dispatching agents, decompose the question and present the plan to the user. This is inspired by how Gemini Deep Research works — showing the plan before executing lets the user redirect strategy before expensive retrieval operations begin.
 
-Break the user's question into 4-6 independent research domains. Each domain becomes a specialist agent. For example, "best AI video creation tools for realistic 15-minute videos" decomposes into:
-- Domain 1: AI avatar / talking head platforms
-- Domain 2: AI voice synthesis tools
-- Domain 3: AI video generation for B-roll
-- Domain 4: Lip sync & face animation
-- Domain 5: Workflow orchestration & pipeline tools
-- Domain 6: Cost & throughput analysis
+Break the user's question into 4-6 research sub-questions. Each sub-question becomes a specialist agent's focus area. The key is making sub-questions independent enough to research in parallel while collectively covering the full scope of the user's question. For example, "best AI video creation tools for realistic 15-minute videos" decomposes into:
+1. What AI avatar / talking head platforms exist and how do they compare?
+2. What AI voice synthesis tools produce the most natural-sounding speech?
+3. What AI video generation tools work best for B-roll and scene creation?
+4. What lip sync and face animation solutions integrate with the above?
+5. How do you orchestrate a pipeline combining these tools end-to-end?
+6. What are the realistic costs and throughput for a 15-minute video?
 
 Present the plan to the user:
 ```
-Researching across 6 domains:
+Researching across 6 sub-questions:
 1. AI avatar / talking head platforms
 2. AI voice synthesis tools
 3. AI video generation for B-roll
@@ -88,7 +88,7 @@ Researching across 6 domains:
 5. Workflow orchestration & pipeline tools
 6. Cost & throughput analysis
 
-Dispatching specialist agents now. (Reply to adjust domains before results come in.)
+Dispatching specialist agents now. (Reply to adjust before results come in.)
 ```
 
 Then proceed immediately — don't block on user confirmation. If the user responds with adjustments before agents finish, incorporate them in a second-pass round.
@@ -141,25 +141,50 @@ markdown and handles JS-rendered pages. Use this escalation pattern:
 
 Create the output directory first: `mkdir -p /tmp/deep-research`
 
+## Search Strategy
+
+Use 2-3 different keyword variations per sub-topic to avoid blind spots from any
+single query phrasing. Mix general and news-focused search terms. For instance,
+searching "AI video generation tools 2026" AND "best text-to-video platforms
+comparison" AND "Runway vs Kling vs Sora" will surface different source pools.
+
 ## What to Research
 
 Find current, specific data: product names, pricing, capabilities, limitations,
-comparisons, and real user experiences. Prefer 2025-2026 data.
+comparisons, and real user experiences. Prefer sources from the last 12 months.
+Prioritize: academic and institutional sources (.gov, .edu, peer-reviewed journals)
+> industry reports and official docs > reputable news outlets > blogs > forums.
+
+## Source Citation Rules
+
+These are critical — the quality of the final report depends on traceable sourcing:
+- Every major claim must cite a specific source: "[Source Name](URL), date"
+- If only ONE source supports a claim, flag it: "(single source — unverified)"
+- Cross-reference key findings: when 3+ sources agree, note the convergence
+- Clearly separate established facts from inferences — use "Based on data from..."
+  vs "It appears that..." or "This suggests..."
+- When citing statistics, always include the year/quarter they refer to
+- Aim for 8-15 unique sources per domain
 
 ## Output Requirements
 
 Produce a structured markdown section titled "## {DOMAIN_NAME}" with:
-- Key findings with specific sources and publication dates
+- Key findings with inline source citations and publication dates
 - Comparison tables where applicable
 - Current limitations and workarounds
+- Confidence rating per finding: High (3+ corroborating sources), Medium (2 sources),
+  Low (single source or inference)
 - Recommendations within this domain
+- A source list at the end: numbered, with URL and one-line summary each
 
 ## Conflict Handling
 
 When sources disagree, report BOTH views with attribution rather than picking a winner.
 Flag the disagreement explicitly: "Source A (date) states X, while Source B (date) states Y."
-Weight peer-reviewed or institutional sources (.gov, .edu, journals) over blogs and opinion
-pieces, but still surface the dissenting view.
+Weight peer-reviewed or institutional sources over blogs and opinion pieces, but still
+surface the dissenting view. Flag temporal conflicts — if an older source says X but a
+newer source says Y, note the timeline and lean toward the newer source unless the older
+one is more authoritative.
 
 ## Saturation
 
@@ -280,13 +305,18 @@ SYNTHESIS INSTRUCTIONS:
 2. When sources disagree, present both perspectives with source attribution. Do not silently pick a winner
 3. Weight peer-reviewed and institutional sources over blogs and opinion pieces
 4. Flag temporal conflicts — if an older source says X but a newer source says Y, note the timeline
-5. Produce the following sections:
-   (a) Executive summary with the top 3 findings
+5. If a claim is supported by only one source, mark it '(single source — treat with caution)'
+6. Separate established facts from inferences — label estimates, projections, and opinions clearly
+7. Assign confidence ratings (High/Medium/Low) to major conclusions based on source convergence
+8. Produce the following sections:
+   (a) Executive summary with the top 3-5 findings
    (b) Detailed findings organized by theme (not by domain — reorganize around insights)
    (c) Comparison matrix where applicable
    (d) Recommended approach / workflow / pipeline
    (e) Current limitations and open questions
-   (f) Sources cited (with dates where available)
+   (f) Sources cited with dates — format: numbered list with [Title](URL) and one-line summary
+   (g) Methodology — how many domains researched, approximate number of sources analyzed,
+       sub-questions investigated, and any domains where coverage was thin
 
 Original question: {USER_QUERY}" \
   -c /tmp/deep-extracts/all_specialist_outputs.md \
@@ -340,12 +370,24 @@ This skill uses a hybrid multi-agent architecture informed by how the major AI p
 
 **Conflict-aware synthesis prompts** (inspired by OpenAI's explicit contradiction surfacing) ensure the final report doesn't silently pick winners when sources disagree.
 
-### Key Lessons from the Research
+### Quality Rules (applies to all outputs)
+
+These are the non-negotiable quality standards for every research report this skill produces. They are inspired by the best practices across deep research implementations and reflect what makes a report trustworthy vs. hand-wavy.
+
+1. **Every claim needs a source.** No unsourced assertions in the final report. If the synthesis model can't trace a claim to a specialist's cited source, it gets cut or flagged as inference.
+2. **Cross-reference findings.** If only one source says it, flag it as "(single source — unverified)." Convergence across 3+ independent sources = high confidence.
+3. **Recency matters.** Prefer sources from the last 12 months. When using older sources, note the date explicitly.
+4. **Acknowledge gaps.** If a sub-question couldn't be answered well, say so explicitly in the report rather than glossing over it. Thin coverage is better disclosed than hidden.
+5. **Separate fact from inference.** Label estimates, projections, and opinions clearly. "Gartner reports 18% growth" (fact) vs. "This suggests the market will..." (inference).
+6. **No hallucinated citations.** Specialist agents sometimes fabricate URLs or source names. The synthesis step should only cite sources that appear in the specialist outputs with real URLs.
+
+### Key Lessons from the Architecture
 
 1. **Firecrawl CLI as primary search tool**: Agents use `firecrawl search --scrape` via Bash for source discovery — it returns clean LLM-optimized markdown and handles JS-rendered pages, bypassing the WebFetch haiku dependency entirely. `litellm_web_search` is the fallback if firecrawl is unavailable. WebFetch is last resort for specific known URLs only.
 2. **Extraction must handle token-limit restarts**: Agents that hit the 32K output limit restart and produce multiple text blocks. The extraction script must concatenate all blocks (>200 chars), not just take the longest one.
 3. **Budget-based stopping is fragile**: Systems that stop based on a compute budget may halt while under-informed. The coverage gap check (Step 3) compensates by detecting thin results and triggering second-pass agents.
 4. **No system truly solves contradiction handling**: All platforms struggle with conflicting sources. Explicitly instructing the synthesis model to surface disagreements (rather than silently resolving them) produces more trustworthy output.
+5. **Multiple keyword variations per sub-topic**: A single search query creates a blind spot. Using 2-3 different phrasings (general + specific + comparative) per sub-question surfaces different source pools and reduces the chance of missing key data.
 
 ---
 

@@ -1,0 +1,23 @@
+{
+  "skill_name": "session-analyst",
+  "evals": [
+    {
+      "id": 0,
+      "prompt": "analyze my claude usage patterns from the last 20 days and tell me what skills I should be using more",
+      "expected_output": "A structured report covering usage overview (sessions, prompts, tokens), project breakdown, tool workflow patterns, skill usage audit showing which installed skills are unused, and specific skill recommendations with evidence from actual usage data",
+      "files": []
+    },
+    {
+      "id": 1,
+      "prompt": "I feel like I'm wasting tokens on repetitive stuff. Can you look at my session history and figure out where I could be more efficient?",
+      "expected_output": "Analysis focused on token consumption patterns, identification of repetitive tool sequences (tool chain analysis), sessions with high compaction rates indicating context bloat, and recommendations for skills or workflows that would reduce manual repetition",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "what am I actually using claude for? give me a breakdown of my usage",
+      "expected_output": "A comprehensive usage breakdown including: task taxonomy (what kinds of work), project landscape (where time goes), time-of-day patterns, tool usage distribution, skill usage audit, and subagent delegation profile",
+      "files": []
+    }
+  ]
+}
