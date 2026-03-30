@@ -348,51 +348,91 @@ def scrape_coinmarketcap(symbol: str) -> tuple[str, Optional[str]]:
 
 
 def scrape_messari(cg_id: str) -> tuple[str, Optional[str]]:
-    """Scrape Messari for on-chain metrics."""
+    """Scrape Messari for on-chain metrics via firecrawl (bypasses Vercel bot challenge)."""
     source = "Messari (On-Chain)"
     try:
-        url = f"https://messari.io/project/{cg_id}/metrics"
-        resp = requests.get(url, headers=HEADERS, timeout=15)
-        resp.raise_for_status()
-        soup = BeautifulSoup(resp.text, "html.parser")
-
-        lines = []
-        for el in soup.find_all(["td", "span", "div"]):
-            text = el.get_text(" ", strip=True)
-            if any(kw in text.lower() for kw in ["active address", "transaction", "nvt", "fee",
-                                                   "hash rate", "staking", "validator"]) and 5 < len(text) < 200:
-                if text not in lines:
-                    lines.append(text)
-
-        if lines:
-            return source, "## On-Chain Metrics (Messari)\n" + "\n".join(lines[:25])
+        url = f"https://messari.io/assets/{cg_id}"
+        outfile = f"/tmp/deep-research/messari-{cg_id}.md"
+        result = subprocess.run(
+            ["firecrawl", "scrape", url, "-o", outfile],
+            capture_output=True, text=True, timeout=30,
+        )
+        if result.returncode != 0 or not os.path.exists(outfile):
+            # Fallback: try the old /project/ URL pattern
+            url2 = f"https://messari.io/project/{cg_id}/metrics"
+            result = subprocess.run(
+                ["firecrawl", "scrape", url2, "-o", outfile],
+                capture_output=True, text=True, timeout=30,
+            )
+        if os.path.exists(outfile):
+            with open(outfile) as f:
+                content = f.read()
+            lines = []
+            for line in content.split("\n"):
+                text = line.strip()
+                if any(kw in text.lower() for kw in [
+                    "active address", "transaction", "nvt", "fee",
+                    "hash rate", "staking", "validator", "market cap",
+                    "volume", "circulating", "total supply",
+                ]) and 5 < len(text) < 300:
+                    if text not in lines:
+                        lines.append(text)
+            if lines:
+                return source, "## On-Chain Metrics (Messari)\n" + "\n".join(lines[:25])
         return source, f"Messari loaded but limited on-chain data for {cg_id}"
     except Exception as e:
         print(f"Warning: {source} failed: {e}", file=sys.stderr)
         return source, None
 
 
-def scrape_intotheblock(symbol: str) -> tuple[str, Optional[str]]:
-    """Scrape IntoTheBlock for whale and exchange flow data."""
-    source = "IntoTheBlock (Whale/Exchange)"
+def scrape_whale_exchange_data(symbol: str, cg_id: str) -> tuple[str, Optional[str]]:
+    """Scrape whale/exchange data from Glassnode (replaced IntoTheBlock which is now gated)."""
+    source = "Glassnode (Whale/Exchange)"
     try:
-        url = f"https://app.intotheblock.com/coin/{symbol.upper()}"
-        resp = requests.get(url, headers=HEADERS, timeout=15)
-        resp.raise_for_status()
-        soup = BeautifulSoup(resp.text, "html.parser")
-
+        # Glassnode studio pages are publicly viewable for BTC and ETH
+        url = f"https://studio.glassnode.com/metrics?a={symbol.upper()}"
+        outfile = f"/tmp/deep-research/glassnode-{symbol.lower()}.md"
+        result = subprocess.run(
+            ["firecrawl", "scrape", url, "-o", outfile],
+            capture_output=True, text=True, timeout=30,
+        )
         lines = []
-        for el in soup.find_all(["span", "div", "p"]):
-            text = el.get_text(" ", strip=True)
-            if any(kw in text.lower() for kw in ["whale", "exchange", "concentration", "holder",
-                                                   "large transaction", "inflow", "outflow",
-                                                   "net flow"]) and 5 < len(text) < 200:
-                if text not in lines:
-                    lines.append(text)
+        if os.path.exists(outfile):
+            with open(outfile) as f:
+                content = f.read()
+            for line in content.split("\n"):
+                text = line.strip()
+                if any(kw in text.lower() for kw in [
+                    "whale", "exchange", "concentration", "holder",
+                    "inflow", "outflow", "net flow", "balance",
+                    "sopr", "realized", "unrealized", "mvrv",
+                ]) and 5 < len(text) < 300:
+                    if text not in lines:
+                        lines.append(text)
+
+        # Fallback: try CoinGlass for exchange data
+        if not lines:
+            cg_url = f"https://www.coinglass.com/currencies/{symbol.upper()}"
+            outfile2 = f"/tmp/deep-research/coinglass-{symbol.lower()}.md"
+            subprocess.run(
+                ["firecrawl", "scrape", cg_url, "-o", outfile2],
+                capture_output=True, text=True, timeout=30,
+            )
+            if os.path.exists(outfile2):
+                with open(outfile2) as f:
+                    content = f.read()
+                for line in content.split("\n"):
+                    text = line.strip()
+                    if any(kw in text.lower() for kw in [
+                        "exchange", "funding", "open interest", "liquidation",
+                        "long/short", "whale", "flow", "reserve",
+                    ]) and 5 < len(text) < 300:
+                        if text not in lines:
+                            lines.append(text)
 
         if lines:
-            return source, "## Whale & Exchange Data (IntoTheBlock)\n" + "\n".join(lines[:20])
-        return source, f"IntoTheBlock loaded but limited data for {symbol} (likely JS-rendered)"
+            return source, "## Whale & Exchange Data (Glassnode/CoinGlass)\n" + "\n".join(lines[:20])
+        return source, f"Whale/exchange data limited for {symbol} — Glassnode and CoinGlass returned minimal public data"
     except Exception as e:
         print(f"Warning: {source} failed: {e}", file=sys.stderr)
         return source, None
@@ -423,26 +463,55 @@ def scrape_cryptoquant(symbol: str) -> tuple[str, Optional[str]]:
         return source, None
 
 
-def scrape_lunarcrush(symbol: str) -> tuple[str, Optional[str]]:
-    """Scrape LunarCrush for social sentiment data."""
+def scrape_lunarcrush(symbol: str, cg_id: str) -> tuple[str, Optional[str]]:
+    """Scrape LunarCrush for social sentiment data (URL: /discover/{coin-name})."""
     source = "LunarCrush (Social Sentiment)"
     try:
-        url = f"https://lunarcrush.com/coins/{symbol.lower()}"
+        # LunarCrush moved from /coins/{symbol} to /discover/{name}
+        url = f"https://lunarcrush.com/discover/{cg_id}"
         resp = requests.get(url, headers=HEADERS, timeout=15)
         resp.raise_for_status()
-        soup = BeautifulSoup(resp.text, "html.parser")
+        html = resp.text
 
         lines = []
-        for el in soup.find_all(["span", "div"]):
-            text = el.get_text(" ", strip=True)
-            if any(kw in text.lower() for kw in ["sentiment", "social volume", "social dominance",
-                                                   "galaxy score", "altrank", "bullish", "bearish"]) and 5 < len(text) < 200:
-                if text not in lines:
-                    lines.append(text)
+
+        # Try parsing the SSR JSON blob embedded in the HTML
+        ssr_match = re.search(r'window\.__LUNAR_DATA_SSR\s*=\s*(\{.*?\});', html, re.DOTALL)
+        if ssr_match:
+            try:
+                ssr_data = json.loads(ssr_match.group(1))
+                # Navigate the SSR data structure for coin metrics
+                for key, val in ssr_data.items():
+                    if isinstance(val, dict) and "data" in val:
+                        data = val["data"]
+                        if isinstance(data, dict):
+                            for metric_key in [
+                                "galaxy_score", "alt_rank", "volatility",
+                                "social_dominance", "interactions_24h",
+                                "market_dominance", "percent_change_24h",
+                                "percent_change_7d", "percent_change_30d",
+                            ]:
+                                if metric_key in data:
+                                    label = metric_key.replace("_", " ").title()
+                                    lines.append(f"- {label}: {data[metric_key]}")
+            except (json.JSONDecodeError, KeyError):
+                pass
+
+        # Fallback: parse HTML text for sentiment keywords
+        if not lines:
+            soup = BeautifulSoup(html, "html.parser")
+            for el in soup.find_all(["span", "div"]):
+                text = el.get_text(" ", strip=True)
+                if any(kw in text.lower() for kw in [
+                    "sentiment", "social volume", "social dominance",
+                    "galaxy score", "altrank", "bullish", "bearish",
+                ]) and 5 < len(text) < 200:
+                    if text not in lines:
+                        lines.append(text)
 
         if lines:
             return source, "## Social Sentiment (LunarCrush)\n" + "\n".join(lines[:20])
-        return source, f"LunarCrush loaded but limited data for {symbol} (likely JS-rendered)"
+        return source, f"LunarCrush loaded but limited data for {cg_id}"
     except Exception as e:
         print(f"Warning: {source} failed: {e}", file=sys.stderr)
         return source, None
@@ -624,6 +693,9 @@ def main():
     # Get the coin name from CoinGecko for news searches
     coin_name = cg_id.replace("-", " ").title()
 
+    # Ensure temp dir exists for firecrawl-based scrapers
+    os.makedirs("/tmp/deep-research", exist_ok=True)
+
     print("Scraping crypto data...", file=sys.stderr)
     scrapers = [
         ("CoinGecko", lambda: scrape_coingecko(cg_id)),
@@ -631,9 +703,9 @@ def main():
         ("Fear & Greed Index", lambda: scrape_fear_greed()),
         ("CoinMarketCap", lambda: scrape_coinmarketcap(cg_id)),
         ("Messari (On-Chain)", lambda: scrape_messari(cg_id)),
-        ("IntoTheBlock (Whale/Exchange)", lambda: scrape_intotheblock(symbol)),
+        ("Glassnode (Whale/Exchange)", lambda: scrape_whale_exchange_data(symbol, cg_id)),
         ("CryptoQuant", lambda: scrape_cryptoquant(symbol)),
-        ("LunarCrush (Social)", lambda: scrape_lunarcrush(symbol)),
+        ("LunarCrush (Social)", lambda: scrape_lunarcrush(symbol, cg_id)),
         ("Google News", lambda: scrape_google_news_crypto(symbol, coin_name)),
         ("Blockchain Explorer", lambda: scrape_blockchain_explorer(symbol)),
     ]
