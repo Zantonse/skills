@@ -1,0 +1,1 @@
+/Users/craigverzosa/Downloads/presales-interns/skills/ss-opa/jit-access-plan//SKILL.md

@@ -1,6 +1,6 @@
 ---
 name: handover
-description: Generate a HANDOVER.md shift-change report documenting everything done in this session so the next Claude picks up exactly where we left off.
+description: Generate a HANDOVER.md shift-change report documenting everything done in this session so the next Claude picks up exactly where we left off. Use whenever the user says "write a handover note", "create a session summary", "document what we did", "end of session wrap-up", "save session state", "what did we accomplish today", or any request to capture the current session's work for the next session to pick up. Pair with /session-starter to load the handover at the start of the next session.
 allowed-tools: Read, Glob, Grep, Write, Bash
 ---
 

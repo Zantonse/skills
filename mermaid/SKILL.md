@@ -1,6 +1,6 @@
 ---
 name: mermaid
-description: Generate Mermaid diagrams from user requirements. Supports flowcharts, sequence diagrams, class diagrams, ER diagrams, Gantt charts, and 18 more diagram types.
+description: Generate Mermaid diagrams from user requirements. Supports flowcharts, sequence diagrams, class diagrams, ER diagrams, Gantt charts, and 18 more diagram types. Outputs Mermaid CODE (text markup) that renders in markdown viewers, not PNG image files. If the user wants an actual image file (PNG/JPG), use nano-banana-art instead. Use this skill for: inline diagrams in markdown docs, README diagrams, GitHub-rendered flowcharts, or when the user explicitly says "mermaid code" or "mermaid diagram".
 allowed-tools: Read Write Edit
 metadata:
   argument-hint: "[diagram description or requirements]"

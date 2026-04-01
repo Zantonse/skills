@@ -1,0 +1,1 @@
+/Users/craigverzosa/Downloads/presales-interns/skills/ss-itp/threat-landscape//SKILL.md

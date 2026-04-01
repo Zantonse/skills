@@ -1,0 +1,1 @@
+/Users/craigverzosa/Downloads/presales-interns/skills/ss-itp/itdr-design//SKILL.md

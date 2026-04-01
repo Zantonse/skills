@@ -1,0 +1,1 @@
+/Users/craigverzosa/Downloads/presales-interns/skills/se/auth0/auth0-competitive-response//SKILL.md

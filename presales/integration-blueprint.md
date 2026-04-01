@@ -1,0 +1,1 @@
+/Users/craigverzosa/Downloads/presales-interns/skills/sa/integration-blueprint//SKILL.md

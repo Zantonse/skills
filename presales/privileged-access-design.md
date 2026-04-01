@@ -1,0 +1,1 @@
+/Users/craigverzosa/Downloads/presales-interns/skills/ss-opa/privileged-access-design//SKILL.md

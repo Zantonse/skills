@@ -1,0 +1,1 @@
+/Users/craigverzosa/Downloads/presales-interns/skills/ss-itp/incident-response-plan//SKILL.md

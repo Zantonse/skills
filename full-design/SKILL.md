@@ -1,6 +1,6 @@
 ---
 name: full-design
-description: End-to-end autonomous design pipeline that chains research, asset generation, and UI implementation into a single command. Runs /modern-ui-design (trend research), /gemini-image-gen (visual assets), then /frontend-design (code) sequentially without pausing. Use when building a new UI from scratch and you want the full design workflow automated. Triggers on "full design", "design pipeline", "build UI end to end", "complete design workflow", or when the user wants research + assets + implementation in one shot. Do NOT use for partial workflows — use the individual skills instead.
+description: End-to-end autonomous design pipeline that chains research, asset generation, and UI implementation into a single command. Runs /modern-ui-design (trend research), /nano-banana-art (visual assets), then /frontend-design (code) sequentially without pausing. Use when building a new UI from scratch and you want the full design workflow automated. Triggers on "full design", "design pipeline", "build UI end to end", "complete design workflow", or when the user wants research + assets + implementation in one shot. Do NOT use for partial workflows — use the individual skills instead.
 ---
 
 Autonomous design pipeline: research → assets → implementation. Run all three stages without pausing.
@@ -16,7 +16,7 @@ Gather the project context from the user's request, then invoke the `/modern-ui-
 
 **Carry forward to Stage 2:** The design brief's visual direction, color palette, and aesthetic recommendations.
 
-### Stage 2: Asset Generation — invoke /gemini-image-gen
+### Stage 2: Asset Generation — invoke /nano-banana-art
 
 Using the design brief from Stage 1, determine what visual assets the UI needs. Common assets:
 - App icon or logo matching the chosen aesthetic
@@ -24,13 +24,13 @@ Using the design brief from Stage 1, determine what visual assets the UI needs. 
 - Custom icons for key UI elements
 - Decorative elements (patterns, gradients, textures)
 
-Invoke `/gemini-image-gen` with prompts derived from the design brief's visual direction. Generate 2-4 assets that the UI will reference.
+Invoke `/nano-banana-art` with prompts derived from the design brief's visual direction. Generate 2-4 assets that the UI will reference.
 
 **Carry forward to Stage 3:** File paths of generated assets + the full design brief.
 
-### Stage 3: UI Implementation — invoke /frontend-design
+### Stage 3: UI Implementation — invoke frontend-design:frontend-design
 
-Invoke `/frontend-design` with the combined context:
+Invoke `frontend-design:frontend-design` with the combined context:
 - Design brief findings (color, typography, layout, motion)
 - Generated asset file paths (reference them in the code)
 - The user's original requirements
@@ -73,5 +73,5 @@ When generating CSS for Tailwind v4 projects, enforce these rules — violation 
 ## Notes
 
 - Always use `model: "sonnet"` for any subagents dispatched
-- If `/gemini-image-gen` is unavailable or fails, skip to Stage 3 — the pipeline should not break due to asset generation issues
+- If `/nano-banana-art` is unavailable or fails, skip to Stage 3 — the pipeline should not break due to asset generation issues
 - If the project already has a design brief from a prior `/modern-ui-design` run, skip Stage 1 and start from Stage 2

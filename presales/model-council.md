@@ -1,0 +1,1 @@
+/Users/craigverzosa/Downloads/presales-interns/skills/research/model-council//SKILL.md

@@ -1,0 +1,1 @@
+/Users/craigverzosa/Downloads/presales-interns/skills/enablement/competitive-update//SKILL.md

@@ -1,0 +1,1 @@
+/Users/craigverzosa/Downloads/presales-interns/skills/sa/scalability-assessment//SKILL.md

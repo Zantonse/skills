@@ -1,0 +1,1 @@
+/Users/craigverzosa/Downloads/presales-interns/skills/enablement/mcp-update//SKILL.md

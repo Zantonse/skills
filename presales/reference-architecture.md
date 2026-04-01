@@ -1,0 +1,1 @@
+/Users/craigverzosa/Downloads/presales-interns/skills/sa/reference-architecture//SKILL.md

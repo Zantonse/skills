@@ -1,0 +1,1 @@
+/Users/craigverzosa/Downloads/presales-interns/skills/ss-ispm/risk-scoring-design//SKILL.md

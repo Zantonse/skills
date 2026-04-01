@@ -1,0 +1,1 @@
+/Users/craigverzosa/Downloads/presales-interns/skills/se/okta/mcp-adapter-demo//SKILL.md

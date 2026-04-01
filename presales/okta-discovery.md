@@ -1,0 +1,1 @@
+/Users/craigverzosa/Downloads/presales-interns/skills/se/okta/okta-discovery//SKILL.md

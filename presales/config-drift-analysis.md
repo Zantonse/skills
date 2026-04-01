@@ -1,0 +1,1 @@
+/Users/craigverzosa/Downloads/presales-interns/skills/ss-ispm/config-drift-analysis//SKILL.md

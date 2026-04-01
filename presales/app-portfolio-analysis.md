@@ -1,0 +1,1 @@
+/Users/craigverzosa/Downloads/presales-interns/skills/shared/app-portfolio-analysis//SKILL.md

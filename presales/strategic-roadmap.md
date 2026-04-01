@@ -1,0 +1,1 @@
+/Users/craigverzosa/Downloads/presales-interns/skills/advisor/strategic-roadmap//SKILL.md

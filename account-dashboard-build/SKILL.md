@@ -139,19 +139,19 @@ For each approved section, create a page or tab component. Follow these principl
 - Each section should be a separate page under `/app/{section-slug}/page.tsx`
 - Use `card` CSS class for all content containers, `section-label` for headers, `badge` for status indicators
 
-### Step 3.3: Content Population
+### Step 3.4: Content Population
 
 For each section, use the synthesized research to populate real content — not placeholder text. The value of this dashboard is that it contains actual account intelligence, not templates.
 
-### Step 3.4: UI Polish
+### Step 3.5: UI Polish
 
 Apply `/frontend-design` skill principles:
 - Clean typography, proper spacing
 - Data-dense where appropriate (tables, metrics cards)
 - Professional aesthetic suitable for internal SE use
-- Optional: use `/gemini-image-gen` for custom header graphics if the user requests visual flair
+- Optional: use `/nano-banana-art` for custom header graphics if the user requests visual flair
 
-### Step 3.5: Local Verification
+### Step 3.6: Local Verification
 
 ```bash
 npm run dev

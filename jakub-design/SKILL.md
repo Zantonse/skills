@@ -1,6 +1,6 @@
 ---
 name: jakub-design
-description: Build interfaces following the design engineering philosophy of Jakub Krehel (jakub.kr). Use when building any frontend UI, web component, page, or application where the user wants a polished, minimalist, craft-focused design. Triggers on "jakub design", "jakub style", "clean UI", "minimalist interface", "design engineer style", "polished UI", or when the user invokes /jakub-design. Produces interfaces that feel alive through shadows, motion, OKLCH color, concentric radius, and optical precision. For custom icon generation, invoke /gemini-image-gen.
+description: Build interfaces following the design engineering philosophy of Jakub Krehel (jakub.kr). Use when building any frontend UI, web component, page, or application where the user wants a polished, minimalist, craft-focused design. Triggers on "jakub design", "jakub style", "clean UI", "minimalist interface", "design engineer style", "polished UI", or when the user invokes /jakub-design. Produces interfaces that feel alive through shadows, motion, OKLCH color, concentric radius, and optical precision. For custom icon generation, invoke /nano-banana-art.
 ---
 
 # Jakub Design System
@@ -94,7 +94,7 @@ Use Motion (formerly Framer Motion) for React:
 
 ## Icon Generation
 
-When custom icons are needed, invoke `/gemini-image-gen`:
+When custom icons are needed, invoke `/nano-banana-art`:
 - Request minimalist, monochrome line icons
 - 1.5px-2px stroke weight, rounded line caps
 - 24x24 or 32x32 resolution

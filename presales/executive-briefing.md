@@ -1,0 +1,1 @@
+/Users/craigverzosa/Downloads/presales-interns/skills/advisor/executive-briefing//SKILL.md
