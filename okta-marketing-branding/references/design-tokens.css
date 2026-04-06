@@ -28,6 +28,22 @@
   /* Heavy shadow (hero overlays) */
   --okta-shadow-heavy: 0 20px 40px rgba(0, 0, 0, 0.5);
 
+  /* --- Gradients (from production CSS) --- */
+  --okta-gradient-blue-section: linear-gradient(56deg, #1a31a9 -16.15%, #3f59e4 63.88%, #b6caff 123.64%);
+  --okta-gradient-dark-sticky: linear-gradient(79deg, #191919 15.16%, #6b665f 277.89%);
+  --okta-gradient-cream-warm: linear-gradient(75deg, #fffefa -65.58%, #f6f1e7 29.37%, #e8dcc7 217.98%);
+  --okta-gradient-footer: linear-gradient(314deg, #e8dcc7, #f6f1e7 64.57%, #fffefa);
+  --okta-gradient-image-overlay: linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.3) 100%);
+
+  /* LIVE badge */
+  --okta-live-badge: #ff7a00;
+
+  /* --- Container width hierarchy --- */
+  --okta-hero-container-max: 82rem;    /* 1312px */
+  --okta-hero-content-max: 63rem;      /* 1008px */
+  --okta-cta-content-max: 68rem;       /* 1088px */
+  --okta-carousel-max: 1120px;
+
   /* --- theme-ui-colors: complete token set from production CSS --- */
 
   /* Primary / Interactive */
@@ -66,6 +82,16 @@
   --theme-ui-colors-buttonSecondaryBackgroundColor: transparent;
   --theme-ui-colors-buttonSecondaryColor: #191919;
   --theme-ui-colors-buttonSecondaryColorHover: #3f59e4;
+  --theme-ui-colors-buttonSecondaryColorActive: #1a31a9;
+  --theme-ui-colors-buttonPrimaryAlternateTextColor: #191919;
+  --theme-ui-colors-buttonPrimaryAlternateColor: #fff;
+  --theme-ui-colors-buttonPrimaryAlternateColorHover: #3f59e4;
+  --theme-ui-colors-buttonSecondaryAlternateTextColor: #fff;
+  --theme-ui-colors-buttonSecondaryAlternateTextColorHover: #b6caff;
+
+  /* Section backgrounds */
+  --theme-ui-colors-sectionPrimaryBackgroundColor: #191919;
+  --theme-ui-colors-sectionSecondaryBackgroundColor: #fffefa;
 
   /* Link states */
   --theme-ui-colors-linkPrimaryColor: #191919;
@@ -112,6 +138,17 @@
   /* --- Spacing --- */
   --okta-container-max: 90rem;   /* 1440px — verified from production CSS */
   --okta-container-padding: 3rem;
+
+  /* Section spacing scale (from production cmp-section-content-ss--sp-below-* modifiers) */
+  --okta-sp-none: 0;
+  --okta-sp-xxs: 0.75rem;   /* 1.5rem on desktop */
+  --okta-sp-xs: 1rem;       /* 2rem on desktop */
+  --okta-sp-s: 1.5rem;      /* 3rem on desktop */
+  --okta-sp-m: 2rem;        /* 4rem on desktop */
+  --okta-sp-l: 2.5rem;      /* 5rem on desktop */
+  --okta-sp-xl: 3rem;       /* 6rem on desktop */
+
+  /* Legacy aliases (kept for backward compat with test page) */
   --okta-section-gap-xs: 1.5rem;
   --okta-section-gap-s: 2.5rem;
   --okta-section-gap-m: 4rem;
