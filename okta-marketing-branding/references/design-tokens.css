@@ -1,6 +1,7 @@
 /*
  * Okta Marketing Design Tokens
- * Source: okta.com/solutions/secure-ai/ (April 2026)
+ * Source: okta.com (6 production pages: homepage, products, pricing, customers,
+ *         company/blog, industry/solutions — April 2026)
  *
  * Usage: Import this file as the base stylesheet for any page
  * that should match Okta's marketing website aesthetic.
@@ -13,24 +14,103 @@
    ======================================== */
 
 :root {
-  /* --- Colors --- */
+  /* --- Okta shorthand tokens (semantic aliases) --- */
   --okta-black: #000000;
   --okta-dark: #191919;
   --okta-cream: #fffefa;
   --okta-blue: #3f59e4;
   --okta-gray-border: #afaba1;
-  --okta-gray-900: #1a1a1a;
 
   /* Glass morphism */
   --okta-glass-bg: rgba(255, 255, 255, 0.2);
-  --okta-glass-shadow: 0px 0px 8px 0px rgba(1, 3, 62, 0.1);
+  --okta-glass-shadow: 0px 0px 8px rgba(1, 3, 62, 0.1);
+
+  /* Heavy shadow (hero overlays) */
+  --okta-shadow-heavy: 0 20px 40px rgba(0, 0, 0, 0.5);
+
+  /* --- theme-ui-colors: complete token set from production CSS --- */
+
+  /* Primary / Interactive */
+  --theme-ui-colors-primary: #3f59e4;
+  --theme-ui-colors-primaryLight: #b6caff;
+
+  /* Secondary (teal) */
+  --theme-ui-colors-secondary: #4cb7a3;
+  --theme-ui-colors-secondaryLight: #b1e4de;
+  --theme-ui-colors-secondaryWarm200: #e27133;
+
+  /* Tertiary (purple) */
+  --theme-ui-colors-tertiary: #4016a0;
+  --theme-ui-colors-tertiaryMedium: #7549f2;
+  --theme-ui-colors-tertiaryLight: #b49bfc;
+
+  /* Neutral grays */
+  --theme-ui-colors-gray000: #fffefa;
+  --theme-ui-colors-gray100: #f6f1e7;
+  --theme-ui-colors-gray200: #e8dcc7;
+  --theme-ui-colors-gray250: #e1e1e1;
+  --theme-ui-colors-gray300: #c1c1c8;
+  --theme-ui-colors-gray400: #afaba1;
+  --theme-ui-colors-gray450: #aeaeae;
+  --theme-ui-colors-gray500: #8c8c96;
+  --theme-ui-colors-gray600: #6b665f;
+  --theme-ui-colors-gray700: #585862;
+  --theme-ui-colors-gray800: #41414b;
+  --theme-ui-colors-gray900: #191919;
+
+  /* Button states */
+  --theme-ui-colors-buttonPrimaryBackgroundColor: #191919;
+  --theme-ui-colors-buttonPrimaryBackgroundColorHover: #3f59e4;
+  --theme-ui-colors-buttonPrimaryBackgroundColorActive: #1a31a9;
+  --theme-ui-colors-buttonPrimaryTextColor: #fff;
+  --theme-ui-colors-buttonSecondaryBackgroundColor: transparent;
+  --theme-ui-colors-buttonSecondaryColor: #191919;
+  --theme-ui-colors-buttonSecondaryColorHover: #3f59e4;
+
+  /* Link states */
+  --theme-ui-colors-linkPrimaryColor: #191919;
+  --theme-ui-colors-linkPrimaryColorHover: #3f59e4;
+  --theme-ui-colors-linkAlternateColor: #fffefa;
+  --theme-ui-colors-linkAlternateColorHover: #b6caff;
+
+  /* Status */
+  --theme-ui-colors-colorError: #da372c;
+
+  /* Content-type category colors */
+  --theme-ui-colors-colorWhitepaper: #cfb1c1;
+  --theme-ui-colors-colorDatasheet: #8d6e97;
+  --theme-ui-colors-colorAnalystResearch: #fad28c;
+  --theme-ui-colors-colorInfographic: #f0bf87;
+  --theme-ui-colors-colorVideo: #abd5d6;
+  --theme-ui-colors-colorDemo: #a0dcc3;
+  --theme-ui-colors-colorWebinar: #2d8c9e;
 
   /* --- Typography --- */
   --okta-font-heading: "playfair-display", serif;
   --okta-font-body: Aeonik, "Helvetica Neue", Helvetica, Arial, sans-serif;
 
+  /* Font size scale (production clientlib-site) */
+  --okta-fs-xxs:  0.625rem;   /*  10px */
+  --okta-fs-xs:   0.75rem;    /*  12px */
+  --okta-fs-sm:   0.875rem;   /*  14px */
+  --okta-fs-base: 1rem;       /*  16px */
+  --okta-fs-lg:   1.25rem;    /*  20px */
+  --okta-fs-xl:   1.5rem;     /*  24px */
+  --okta-fs-2xl:  1.75rem;    /*  28px */
+  --okta-fs-3xl:  2rem;       /*  32px */
+  --okta-fs-4xl:  2.5rem;     /*  40px */
+  --okta-fs-4hxl: 2.75rem;    /*  44px */
+  --okta-fs-5xl:  3rem;       /*  48px */
+  --okta-fs-6xl:  3.5rem;     /*  56px */
+  --okta-fs-7xl:  4rem;       /*  64px */
+  --okta-fs-8xl:  4.5rem;     /*  72px */
+  --okta-fs-9xl:  5rem;       /*  80px */
+  --okta-fs-10xl: 6rem;       /*  96px */
+  --okta-fs-11xl: 7rem;       /* 112px */
+  --okta-fs-12xl: 8rem;       /* 128px */
+
   /* --- Spacing --- */
-  --okta-container-max: 84rem; /* 1344px */
+  --okta-container-max: 90rem;   /* 1440px — verified from production CSS */
   --okta-container-padding: 3rem;
   --okta-section-gap-xs: 1.5rem;
   --okta-section-gap-s: 2.5rem;
@@ -41,9 +121,13 @@
   --okta-radius-card: 16px;
   --okta-radius-button: 0.25rem;
 
+  /* --- Transitions --- */
+  --okta-transition-standard: opacity 0.3s, visibility 0.3s;
+  --okta-transition-button: background-color 0.3s ease-out, border-color 0.3s ease-out, color 0.3s ease-out;
+
   /* --- Breakpoints (for reference, use in media queries) --- */
-  /* Mobile: < 768px */
-  /* Tablet: 769px - 1200px */
+  /* Mobile:  < 768px  */
+  /* Tablet:  769px - 1200px */
   /* Desktop: 1201px+ */
 }
 
@@ -72,30 +156,70 @@ body {
   background-color: var(--okta-cream);
 }
 
+/* --- Base heading scale: Aeonik (default) ---
+   Playfair Display is overlaid via page-specific styles on hero/marketing sections.
+   The h1-h3 below reflect the base clientlib-site scale. */
+
 h1, h2, h3 {
-  font-family: var(--okta-font-heading);
+  font-family: var(--okta-font-body);
   font-weight: 400;
   font-style: normal;
-  font-variant-numeric: lining-nums proportional-nums;
-  font-feature-settings: "liga" 1;
-  -webkit-font-feature-settings: "liga" 1;
-  line-height: 1.15;
+  line-height: 1.25;
 }
 
-h1 { font-size: 52px; }
-h2 { font-size: 36px; }
-h3 { font-size: 24px; }
+/* h1: weight 400, letter-spacing -0.02rem, line-height 114-136% */
+h1 {
+  font-size: 2rem;          /* mobile */
+  letter-spacing: -0.02rem;
+  line-height: 1.25;
+}
+
+/* h2: weight 400, letter-spacing -0.01rem, line-height 125-133% */
+h2 {
+  font-size: 1.5rem;        /* mobile */
+  letter-spacing: -0.01rem;
+  line-height: 1.3;
+}
+
+/* h3: weight 500, letter-spacing 0–-0.005rem, line-height 135-140% */
+h3 {
+  font-size: 1.25rem;       /* mobile */
+  font-weight: 500;
+  letter-spacing: -0.005rem;
+  line-height: 1.375;
+}
 
 @media screen and (min-width: 769px) {
-  h1 { font-size: 72px; }
-  h2 { font-size: 42px; }
-  h3 { font-size: 28px; }
+  h1 { font-size: 2.5rem; }
+  h2 { font-size: 1.75rem; }
+  h3 { font-size: 1.5rem; }
 }
 
 @media screen and (min-width: 1201px) {
-  h1 { font-size: 92px; }
-  h2 { font-size: 48px; }
-  h3 { font-size: 32px; }
+  h1 { font-size: 3.5rem; }
+  h2 { font-size: 2rem; }
+  h3 { font-size: 1.5rem; }
+}
+
+/* --- Playfair hero override (applies to .okta-font-heading elements) --- */
+.okta-heading--display,
+.okta-hero__title {
+  font-family: var(--okta-font-heading);
+  font-weight: 400;
+  font-variant-numeric: lining-nums proportional-nums;
+  font-feature-settings: "liga" 1;
+  -webkit-font-feature-settings: "liga" 1;
+  font-size: 52px;          /* mobile */
+}
+
+@media screen and (min-width: 769px) {
+  .okta-heading--display,
+  .okta-hero__title { font-size: 72px; }
+}
+
+@media screen and (min-width: 1201px) {
+  .okta-heading--display,
+  .okta-hero__title { font-size: 92px; }
 }
 
 p {
@@ -110,18 +234,27 @@ p {
    LAYOUT
    ======================================== */
 
-.okta-container {
-  max-width: var(--okta-container-max);
+/* .grid-container maps to Okta's production class */
+.okta-container,
+.grid-container {
+  max-width: var(--okta-container-max);  /* 90rem / 1440px */
   margin: 0 auto;
-  padding-inline: 1rem;
+  padding: 0 1rem;                       /* mobile */
 }
 
 @media screen and (min-width: 769px) {
-  .okta-container { padding-inline: 4rem; }
+  .okta-container,
+  .grid-container { padding: 0 4rem; }  /* tablet */
 }
 
-@media screen and (min-width: 1201px) {
-  .okta-container { padding-inline: var(--okta-container-padding); }
+/* Desktop padding collapses; max-width centers the content */
+
+/* Blue section separator line (production: .grid-container:before) */
+.grid-container:before,
+.okta-section-divider:before {
+  content: "";
+  display: block;
+  border-top: 4px solid var(--theme-ui-colors-primary);
 }
 
 .okta-grid-2 {
@@ -142,9 +275,9 @@ p {
    SECTION SPACING
    ======================================== */
 
-.okta-section--xs { padding-block: var(--okta-section-gap-xs); }
-.okta-section--s  { padding-block: var(--okta-section-gap-s); }
-.okta-section--m  { padding-block: var(--okta-section-gap-m); }
+.okta-section--xs  { padding-block: var(--okta-section-gap-xs); }
+.okta-section--s   { padding-block: var(--okta-section-gap-s); }
+.okta-section--m   { padding-block: var(--okta-section-gap-m); }
 .okta-section--xxl { padding-block: var(--okta-section-gap-xxl); }
 
 
@@ -164,35 +297,39 @@ p {
   text-decoration: none;
   border-radius: var(--okta-radius-button);
   cursor: pointer;
-  transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+  transition: var(--okta-transition-button);
 }
 
 /* Primary button (light context) */
 .okta-btn--primary {
-  background-color: var(--okta-dark);
-  color: var(--okta-cream);
-  fill: var(--okta-cream);
+  background-color: var(--theme-ui-colors-buttonPrimaryBackgroundColor);
+  color: var(--theme-ui-colors-buttonPrimaryTextColor);
+  fill: var(--theme-ui-colors-buttonPrimaryTextColor);
   border: none;
   padding: 0.75rem 2rem;
 }
 
 .okta-btn--primary:hover {
-  background-color: var(--okta-blue);
+  background-color: var(--theme-ui-colors-buttonPrimaryBackgroundColorHover);
+}
+
+.okta-btn--primary:active {
+  background-color: var(--theme-ui-colors-buttonPrimaryBackgroundColorActive);
 }
 
 /* Secondary button (light context) */
 .okta-btn--secondary {
-  background-color: transparent;
-  color: var(--okta-dark);
-  fill: var(--okta-dark);
-  border: 0.09375rem solid var(--okta-dark);
+  background-color: var(--theme-ui-colors-buttonSecondaryBackgroundColor);
+  color: var(--theme-ui-colors-buttonSecondaryColor);
+  fill: var(--theme-ui-colors-buttonSecondaryColor);
+  border: 0.09375rem solid var(--theme-ui-colors-buttonSecondaryColor);
   padding: 10.5px 2rem;
 }
 
 .okta-btn--secondary:hover {
-  border-color: var(--okta-blue);
-  color: var(--okta-blue);
-  fill: var(--okta-blue);
+  border-color: var(--theme-ui-colors-buttonSecondaryColorHover);
+  color: var(--theme-ui-colors-buttonSecondaryColorHover);
+  fill: var(--theme-ui-colors-buttonSecondaryColorHover);
 }
 
 /* Large button variant */
@@ -268,10 +405,7 @@ p {
   .okta-hero__content { padding: 10rem 3rem 6rem; }
 }
 
-.okta-hero__title {
-  color: var(--okta-cream);
-  max-width: 900px;
-}
+/* .okta-hero__title uses the .okta-heading--display Playfair override above */
 
 .okta-hero__subtitle {
   font-weight: 500;
@@ -351,7 +485,7 @@ p {
 
 /* Cream theme (warm cards) */
 .okta-card--cream {
-  background-color: #f5f0e8;
+  background-color: var(--theme-ui-colors-gray100);
   color: var(--okta-dark);
 }
 
@@ -359,6 +493,11 @@ p {
   width: 100%;
   aspect-ratio: 16 / 10;
   object-fit: cover;
+}
+
+/* Customer story card image: 624x270 (2.31:1) */
+.okta-card__image--story {
+  aspect-ratio: 624 / 270;
 }
 
 .okta-card__content {
@@ -383,6 +522,20 @@ p {
   font-weight: 400;
   line-height: 1.3;
 }
+
+
+/* ========================================
+   CONTENT-TYPE COLOR TAGS
+   Used on resource cards, blog listings
+   ======================================== */
+
+.okta-tag--whitepaper       { background-color: var(--theme-ui-colors-colorWhitepaper); }
+.okta-tag--datasheet        { background-color: var(--theme-ui-colors-colorDatasheet); }
+.okta-tag--analyst-research { background-color: var(--theme-ui-colors-colorAnalystResearch); }
+.okta-tag--infographic      { background-color: var(--theme-ui-colors-colorInfographic); }
+.okta-tag--video            { background-color: var(--theme-ui-colors-colorVideo); }
+.okta-tag--demo             { background-color: var(--theme-ui-colors-colorDemo); }
+.okta-tag--webinar          { background-color: var(--theme-ui-colors-colorWebinar); }
 
 
 /* ========================================
@@ -488,7 +641,7 @@ p {
 
 
 /* ========================================
-   TABS
+   TABS (Horizontal)
    ======================================== */
 
 .okta-tabs__list {
@@ -511,7 +664,7 @@ p {
   background: none;
   cursor: pointer;
   border-bottom: 2px solid transparent;
-  transition: opacity 0.2s, border-color 0.2s;
+  transition: opacity 0.3s, border-color 0.3s;
 }
 
 .okta-tabs__tab--active,
@@ -576,6 +729,376 @@ p {
 
 
 /* ========================================
+   PRODUCT SHOWCASE TABS (Horizontal + Video)
+   ======================================== */
+
+/* Mobile: collapses to a <select> dropdown */
+.okta-htabs {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.okta-htabs__list {
+  display: flex;
+  list-style: none;
+  gap: 0.25rem;
+  overflow-x: auto;
+  border-bottom: 1px solid var(--theme-ui-colors-gray250);
+}
+
+.okta-htabs__tab {
+  padding: 0.75rem 1.25rem;
+  font-family: var(--okta-font-body);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  white-space: nowrap;
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  color: var(--theme-ui-colors-gray500);
+  cursor: pointer;
+  transition: var(--okta-transition-button);
+}
+
+.okta-htabs__tab--active,
+.okta-htabs__tab:hover {
+  color: var(--okta-dark);
+  border-bottom-color: var(--theme-ui-colors-primary);
+}
+
+.okta-htabs__panel {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+@media screen and (min-width: 769px) {
+  .okta-htabs__panel {
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+}
+
+
+/* ========================================
+   PLAY BUTTON (Video Overlay)
+   ======================================== */
+
+.okta-play-btn {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  border: 2.5px solid var(--okta-cream);
+  background: rgba(25, 25, 25, 0.3);    /* #191919 at 30% opacity */
+  backdrop-filter: blur(12px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.okta-play-btn:hover {
+  transform: scale(1.05);
+}
+
+/* Triangle icon inside play button */
+.okta-play-btn__icon {
+  width: 0;
+  height: 0;
+  border-top: 14px solid transparent;
+  border-bottom: 14px solid transparent;
+  border-left: 22px solid var(--okta-cream);  /* #FFFEFA fill */
+  margin-left: 4px;
+}
+
+
+/* ========================================
+   CUSTOMER CAROUSEL (Full-width Testimonial)
+   ======================================== */
+
+.okta-carousel {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+@media screen and (min-width: 1201px) {
+  .okta-carousel { height: 520px; }
+}
+
+.okta-carousel__slide {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+}
+
+.okta-carousel__content {
+  position: relative;
+  z-index: 1;
+  padding: 3rem 1rem;
+  color: var(--okta-cream);
+  max-width: 640px;
+}
+
+.okta-carousel__quote {
+  font-family: var(--okta-font-heading);
+  font-size: 1.5rem;
+  font-weight: 400;
+  line-height: 1.35;
+  margin: 1rem 0;
+}
+
+.okta-carousel__nav {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+}
+
+.okta-carousel__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.4);
+  border: none;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.okta-carousel__dot--active {
+  background: var(--okta-cream);
+}
+
+
+/* ========================================
+   PRICING CARDS
+   ======================================== */
+
+.okta-pricing-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+@media screen and (min-width: 769px) {
+  .okta-pricing-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media screen and (min-width: 1201px) {
+  .okta-pricing-grid { grid-template-columns: repeat(4, 1fr); }
+}
+
+.okta-pricing-card {
+  position: relative;
+  border: 1px solid var(--theme-ui-colors-gray250);
+  border-radius: var(--okta-radius-card);
+  padding: 2rem 1.5rem;
+  background: var(--okta-cream);
+}
+
+.okta-pricing-card--popular {
+  border-color: var(--theme-ui-colors-primary);
+  box-shadow: var(--okta-glass-shadow);
+}
+
+.okta-pricing-badge {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: var(--theme-ui-colors-primary);
+  color: #fff;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.2rem 0.75rem;
+  border-radius: 1rem;
+}
+
+.okta-pricing-card__price {
+  font-size: 2.5rem;
+  font-weight: 400;
+  line-height: 1;
+  margin: 0.75rem 0 0.25rem;
+}
+
+.okta-pricing-card__unit {
+  font-size: 0.875rem;
+  color: var(--theme-ui-colors-gray500);
+  margin-bottom: 1.5rem;
+}
+
+.okta-pricing-card__features {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 0.9375rem;
+}
+
+
+/* ========================================
+   LOGO BAR
+   ======================================== */
+
+.okta-logo-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem 3rem;
+  padding: 2rem 0;
+}
+
+/* --carbon theme: render all logos in grayscale/monochrome */
+.okta-logo-bar--carbon img,
+.okta-logo-bar--carbon svg {
+  filter: grayscale(100%);
+  opacity: 0.6;
+  transition: opacity 0.3s;
+}
+
+.okta-logo-bar--carbon img:hover,
+.okta-logo-bar--carbon svg:hover {
+  opacity: 1;
+}
+
+
+/* ========================================
+   LEADERSHIP CARDS
+   ======================================== */
+
+.okta-leadership-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+}
+
+@media screen and (min-width: 769px) {
+  .okta-leadership-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media screen and (min-width: 1201px) {
+  .okta-leadership-grid { grid-template-columns: repeat(4, 1fr); }
+}
+
+.okta-leadership-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  text-decoration: none;
+  color: inherit;
+}
+
+.okta-leadership-card__photo {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: var(--okta-radius-card);
+}
+
+.okta-leadership-card__name {
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.okta-leadership-card__title {
+  font-size: 0.875rem;
+  color: var(--theme-ui-colors-gray500);
+  line-height: 1.4;
+}
+
+
+/* ========================================
+   BLOG CARDS
+   ======================================== */
+
+/* Featured blog card */
+.okta-blog-featured {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+@media screen and (min-width: 769px) {
+  .okta-blog-featured { grid-template-columns: 1fr 1fr; }
+}
+
+.okta-blog-featured__meta {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.8125rem;
+  color: var(--theme-ui-colors-gray500);
+  margin-bottom: 0.5rem;
+}
+
+/* "~ N Minutes" reading time format */
+.okta-blog__reading-time::before {
+  content: "~ ";
+}
+
+/* Listing card (no author/excerpt) */
+.okta-blog-listing {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+@media screen and (min-width: 769px) {
+  .okta-blog-listing { grid-template-columns: repeat(3, 1fr); }
+}
+
+.okta-blog-listing__card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1.5rem 0;
+  border-top: 1px solid var(--theme-ui-colors-gray200);
+}
+
+.okta-blog-listing__category {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.okta-blog-listing__title {
+  font-weight: 700;
+  font-size: 1rem;
+  line-height: 1.35;
+}
+
+
+/* ========================================
+   DARK SECTION HELPER
+   ======================================== */
+
+.okta-section--dark {
+  background-color: var(--okta-black);
+  color: var(--okta-cream);
+}
+
+.okta-section--dark h1,
+.okta-section--dark h2,
+.okta-section--dark h3 {
+  color: var(--okta-cream);
+}
+
+.okta-section--dark p {
+  color: var(--okta-cream);
+}
+
+
+/* ========================================
    FOOTER
    ======================================== */
 
@@ -589,7 +1112,7 @@ p {
   color: var(--okta-cream);
   text-decoration: none;
   opacity: 0.8;
-  transition: opacity 0.2s;
+  transition: opacity 0.3s;
 }
 
 .okta-footer a:hover {
@@ -626,56 +1149,13 @@ p {
 
 .okta-footer__divider {
   border: none;
-  border-top: 0.0625rem solid var(--okta-gray-border);
+  border-top: 0.0625rem solid var(--theme-ui-colors-gray400);
   margin: 2rem 0;
 }
 
 .okta-footer__copyright {
   font-size: 0.8125rem;
   opacity: 0.6;
-}
-
-
-/* ========================================
-   PLAY BUTTON (Video Overlay)
-   ======================================== */
-
-.okta-play-btn {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  border: 2.5px solid var(--okta-cream);
-  background: rgba(25, 25, 25, 0.3);
-  backdrop-filter: blur(12px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: transform 0.2s;
-}
-
-.okta-play-btn:hover {
-  transform: scale(1.05);
-}
-
-
-/* ========================================
-   DARK SECTION HELPER
-   ======================================== */
-
-.okta-section--dark {
-  background-color: var(--okta-black);
-  color: var(--okta-cream);
-}
-
-.okta-section--dark h1,
-.okta-section--dark h2,
-.okta-section--dark h3 {
-  color: var(--okta-cream);
-}
-
-.okta-section--dark p {
-  color: var(--okta-cream);
 }
 
 
@@ -695,7 +1175,7 @@ p {
   content: "";
   display: block;
   height: 0.0625rem;
-  background-color: var(--okta-gray-border);
+  background-color: var(--theme-ui-colors-gray400);
   margin-top: 2.5rem;
 }
 
