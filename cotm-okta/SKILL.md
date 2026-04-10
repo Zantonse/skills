@@ -1,5 +1,5 @@
 ---
-name: cotm
+name: cotm-okta
 description: |
   Generate Apex / Command of the Message (CotM) deliverables for Okta Solution Engineers —
   champion briefs, executive summaries, discovery summaries, demo narratives, mantras, battle
