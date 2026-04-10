@@ -84,15 +84,8 @@ Map UP the pyramid for exec deliverables. Map DOWN for technical demos.
 
 ## Phase 0: Input Collection
 
-This is the most important phase. Output quality = input quality.
+Output quality = input quality. Extract VMF fields from user's call notes / transcript / account context using customer's exact words, then present completeness check:
 
-**When user provides call notes / transcript / account context:**
-1. Extract each VMF field using customer's exact words
-2. Identify which Value Driver(s) apply (Okta or Auth0)
-3. Present VMF completeness check
-4. Ask: "Is this accurate? Anything to correct before I generate?"
-
-**VMF Completeness Display:**
 ```
 VMF STATUS: [Company] | Platform: Okta WIC | VD: Identity Security
 ✓ Before Scenario: "contractors have no access controls — 30 days post-engagement"
@@ -201,14 +194,6 @@ Okta uses MEDDPICCC — with Compelling Event as a separate element.
 
 ## Win Lab Format ($250K+ Deals)
 
-Tiered by deal size. 2 per AE per quarter minimum.
-
-| Tier | Deal Size | Required Attendees |
-|------|-----------|-------------------|
-| Standard | $250K–$500K | AE, SE, Manager |
-| Advanced | $500K–$1M | + RVP/RD, CSM |
-| Strategic | $1M+ | + Deal Exec Sponsor |
-
 SE provides the **Big Deal Review** for all Win Labs:
 - VMF completeness status
 - Technical validation summary
@@ -258,18 +243,3 @@ Evaluate against the **8-Dimension CotM Rubric**:
 4. **The competitor test.** "Remove the vendor name — could this be any competitor's pitch?" If yes, too generic.
 5. **The champion test.** "Could the champion paste this into an internal email and win the budget fight without the SE present?"
 6. **Map the Pain Pyramid.** IC pain → VP need → EB goal. Executive deliverables use Goal language. Demo narratives use Pain language. Champion briefs bridge both.
-
----
-
-## SE-Specific Guidance (from Okta Apex Training)
-
-> "Move from 'technical validation' to 'value validation.' Use Required Capabilities to frame
-> demos. Instead of showing features, show how specific technical capabilities solve for
-> business pains the AE uncovered. This helps you trap competitors who can't meet those
-> specific technical requirements."
-
-The SE earns the right to each stage:
-- Discovery earns the demo
-- Demo earns the POC
-- POC earns the executive meeting
-- At every stage: translate technical reality into business language using the VMF
