@@ -7,7 +7,7 @@ description: "Parallel specialist agent teams for comprehensive research with Ge
 
 Parallel specialist agent teams for comprehensive research, with Gemini synthesis. Every research request uses the full agent team pipeline — there is no "simple" mode.
 
-**Architecture:** Decompose the question into 4-6 research domains → dispatch parallel specialist agents (each scrapes the web independently) → check coverage gaps → synthesize all findings through Gemini's large context window → save to Obsidian vault.
+**Architecture:** Decompose the question into 4-6 research domains → dispatch parallel specialist agents (each scrapes the web independently) → content-aware gap check with LLM evaluation → cross-agent reasoning to find blind spots → optional targeted follow-up agents → synthesize all findings through Gemini's large context window → save to Obsidian vault. Optional `--depth 2` mode adds a post-synthesis refinement pass.
 
 ## Gemini Synthesis Script
 
@@ -78,6 +78,8 @@ Break the user's question into 4-6 research sub-questions. Each sub-question bec
 5. How do you orchestrate a pipeline combining these tools end-to-end?
 6. What are the realistic costs and throughput for a 15-minute video?
 
+**Check for depth flag.** If the user included `--depth 2` (or said "go deeper", "be thorough", "iterative"), note that a post-synthesis refinement pass will run after the initial report. Default is depth 1 (single pass).
+
 Present the plan to the user:
 ```
 Researching across 6 sub-questions:
@@ -88,6 +90,7 @@ Researching across 6 sub-questions:
 5. Workflow orchestration & pipeline tools
 6. Cost & throughput analysis
 
+Depth: {1 or 2} ({"single pass" or "with post-synthesis refinement"})
 Dispatching specialist agents now. (Reply to adjust before results come in.)
 ```
 
@@ -95,12 +98,13 @@ Then proceed immediately — don't block on user confirmation. If the user respo
 
 ### Step 1: Dispatch Specialist Agents in Parallel
 
-For each domain, dispatch a `general-purpose` subagent with `model: "sonnet"`:
+For each domain, dispatch a `general-purpose` subagent with `model: "sonnet"` and `max_turns: 25`:
 
 ```
 Task(
   subagent_type="general-purpose",
   model="sonnet",
+  max_turns=25,
   run_in_background=true,
   prompt="""
 You are a specialist researcher investigating: {DOMAIN_DESCRIPTION}
@@ -144,9 +148,7 @@ Create the output directory first: `mkdir -p /tmp/deep-research`
 ## Search Strategy
 
 Use 2-3 different keyword variations per sub-topic to avoid blind spots from any
-single query phrasing. Mix general and news-focused search terms. For instance,
-searching "AI video generation tools 2026" AND "best text-to-video platforms
-comparison" AND "Runway vs Kling vs Sora" will surface different source pools.
+single query phrasing. Mix general and news-focused search terms.
 
 ## What to Research
 
@@ -157,12 +159,10 @@ Prioritize: academic and institutional sources (.gov, .edu, peer-reviewed journa
 
 ## Source Citation Rules
 
-These are critical — the quality of the final report depends on traceable sourcing:
 - Every major claim must cite a specific source: "[Source Name](URL), date"
 - If only ONE source supports a claim, flag it: "(single source — unverified)"
 - Cross-reference key findings: when 3+ sources agree, note the convergence
-- Clearly separate established facts from inferences — use "Based on data from..."
-  vs "It appears that..." or "This suggests..."
+- Clearly separate established facts from inferences
 - When citing statistics, always include the year/quarter they refer to
 - Aim for 8-15 unique sources per domain
 
@@ -180,34 +180,38 @@ Produce a structured markdown section titled "## {DOMAIN_NAME}" with:
 ## Conflict Handling
 
 When sources disagree, report BOTH views with attribution rather than picking a winner.
-Flag the disagreement explicitly: "Source A (date) states X, while Source B (date) states Y."
-Weight peer-reviewed or institutional sources over blogs and opinion pieces, but still
-surface the dissenting view. Flag temporal conflicts — if an older source says X but a
-newer source says Y, note the timeline and lean toward the newer source unless the older
-one is more authoritative.
+Flag the disagreement explicitly.
 
 ## Saturation
 
-Stop searching for a sub-topic when:
-- You have 3+ corroborating sources for a claim
-- New searches return information you've already captured
-- You've covered the core dimensions (what, who, how much, limitations)
+Stop searching when you have 3+ corroborating sources for a claim, new searches return
+information you've already captured, and you've covered the core dimensions.
 
 ## Length Constraint
 
 Keep total output under 12,000 characters. Be specific and data-rich, not verbose.
-Truncate background context in favor of concrete findings.
 
 Today's date: {TODAY_DATE}
 """
 )
 ```
 
-All agents run concurrently. Dispatch them all in a single message.
+All agents run concurrently. **Dispatch them all in a single message.**
+
+#### Agent Progress Monitoring
+
+After dispatching all background agents, **poll their status every 20 seconds** using `TaskOutput(task_id=AGENT_ID, block=false, timeout=1000)`. Print one-line status updates:
+
+```
+"Progress: 2/6 agents complete | domain3 still searching | domain5 extracting..."
+"✓ Domain 2 (AI voice synthesis) complete — 4,200 chars, 11 sources found"
+```
+
+**8-minute wall-clock timeout:** If agents haven't returned within 8 minutes, collect whatever output exists from completed agents and proceed. Print: `"Pipeline timeout: 4/6 agents completed. Proceeding with available data."`
 
 ### Step 2: Extract Specialist Outputs from JSONL
 
-After all agents complete, extract their research text from the JSONL transcript files. Agents may hit the 32K output token limit and restart, producing multiple text blocks — the extraction must capture ALL of them, not just the longest one.
+After all agents complete (or timeout fires), extract research text from JSONL transcripts. Agents may hit the 32K output token limit and restart — the extraction must capture ALL text blocks, not just the longest one.
 
 ```bash
 mkdir -p /tmp/deep-extracts && python3 -c "
@@ -216,8 +220,6 @@ import json, os
 agents = {
     'domain1': '{AGENT1_ID}',
     'domain2': '{AGENT2_ID}',
-    'domain3': '{AGENT3_ID}',
-    'domain4': '{AGENT4_ID}',
     # ... add more as needed
 }
 
@@ -243,7 +245,6 @@ for name, agent_id in agents.items():
                                     if len(text) > 200:
                                         all_texts.append(text)
                 except: pass
-        # Concatenate all qualifying text blocks, separated by dividers
         combined = '\n\n---\n\n'.join(all_texts)
         outpath = f'/tmp/deep-extracts/{name}.md'
         with open(outpath, 'w') as f:
@@ -254,77 +255,74 @@ for name, agent_id in agents.items():
 "
 ```
 
-### Step 3: Coverage Gap Check (adaptive second pass)
+### Step 3: Content-Aware Coverage Gap Check
 
-Before synthesis, verify each domain produced substantive results. This is inspired by how Gemini checks coverage against its research plan — if a sub-topic is under-covered, it runs additional searches before synthesizing.
+Evaluate each domain's output for **substantive quality**, not just character count.
 
-```bash
-# Check which domains have thin or failed results
-python3 -c "
-import os
-thin = []
-for f in sorted(os.listdir('/tmp/deep-extracts')):
-    if not f.endswith('.md'): continue
-    path = os.path.join('/tmp/deep-extracts', f)
-    size = os.path.getsize(path)
-    domain = f.replace('.md','')
-    if size < 1000:
-        thin.append(domain)
-        print(f'THIN: {domain} ({size} chars)')
-    else:
-        print(f'OK:   {domain} ({size} chars)')
-if thin:
-    print(f'\nDomains needing second pass: {thin}')
-else:
-    print(f'\nAll domains have sufficient coverage.')
-"
-```
+#### Phase 3a: Quick Size Pre-screen
 
-If any domains returned thin results (<1000 chars), dispatch a **second-pass agent** for each, using different search terms and a more focused prompt. These second-pass agents should:
-- Use broader/alternative search terms
-- Try different angles on the same topic
-- Fall back to training knowledge if web search continues to fail
-- Target the specific gaps rather than re-researching the whole domain
+Domains with `< 100 chars` are agent failures — go directly to second-pass. Domains with `< 500 chars` are flagged as thin.
 
-After second-pass agents complete, re-extract and merge their outputs into the existing domain files.
+#### Phase 3b: LLM Quality Evaluation
+
+Dispatch a **single evaluation agent** (`model: "sonnet"`, `max_turns: 5`) that reads ALL domain outputs and rates each one against its research sub-question:
+
+- **Coverage score (1-5):** 1=empty/irrelevant, 2=tangential, 3=partial, 4=solid with minor gaps, 5=comprehensive
+- **Gap description:** What specific aspect is missing or weak?
+- **Suggested follow-up search:** If score < 4, what specific query would fill the gap?
+
+#### Phase 3c: Context-Enriched Second-Pass
+
+For any domain scored < 4 (or < 100 chars from pre-screen), dispatch a **second-pass agent** that receives:
+
+1. The **first-pass output** (even if thin) — so it doesn't re-search what was already found
+2. The **evaluator's specific gap description** — so it targets what's missing
+3. **URLs discovered by other domain agents** — so it can drill into cross-domain leads
+4. The **evaluator's suggested follow-up search query** — as a starting point
+
+Second-pass agents use `max_turns: 20` and target gaps rather than re-researching the whole domain. After completion, merge outputs with originals.
+
+### Step 3.5: Cross-Agent Reasoning (Blind Spot Detection)
+
+**Runs AFTER gap-filling, BEFORE synthesis.** This is the key intelligence layer that turns independent parallel research into a coherent whole.
+
+Dispatch a single reasoning agent (`model: "sonnet"`, `max_turns: 8`) that reads ALL domain outputs together:
+
+1. **Contradiction Detection:** Where do two specialists make conflicting claims?
+2. **Blind Spot Analysis:** What important angle did ALL specialists miss?
+3. **Single Most Valuable Follow-Up:** One specific search query that would most improve the report.
+4. **Source Quality Audit:** Scan for potentially hallucinated citations.
+5. **Synthesis Guidance:** 2-3 sentences for the synthesis model about what to watch for.
+
+Output saved to `/tmp/deep-extracts/_cross_agent_reasoning.md`.
+
+**If a critical blind spot is identified with a specific follow-up search**, dispatch one final targeted agent (`max_turns: 15`) to fill it. Save to `/tmp/deep-extracts/_blindspot_fill.md`.
 
 ### Step 4: Synthesize with Gemini via LiteLLM
 
-Concatenate all extracted specialist outputs into a single context file, then send to Gemini for synthesis:
+Concatenate all specialist outputs **plus the cross-agent reasoning analysis**, then send to Gemini:
 
 ```bash
-# Concatenate all specialist outputs
 cat /tmp/deep-extracts/*.md > /tmp/deep-extracts/all_specialist_outputs.md
 
-# Send to Gemini for synthesis
 python3 /Users/craigverzosa/.claude/skills/deep-research/scripts/research.py \
   -q "Synthesize the following specialist research into a comprehensive, actionable report.
 
 SYNTHESIS INSTRUCTIONS:
-1. Cross-reference findings across domains — identify where specialists AGREE and where they CONTRADICT each other
-2. When sources disagree, present both perspectives with source attribution. Do not silently pick a winner
-3. Weight peer-reviewed and institutional sources over blogs and opinion pieces
-4. Flag temporal conflicts — if an older source says X but a newer source says Y, note the timeline
-5. If a claim is supported by only one source, mark it '(single source — treat with caution)'
-6. Separate established facts from inferences — label estimates, projections, and opinions clearly
-7. Assign confidence ratings (High/Medium/Low) to major conclusions based on source convergence
-8. Produce the following sections:
-   (a) Executive summary with the top 3-5 findings
-   (b) Detailed findings organized by theme (not by domain — reorganize around insights)
-   (c) Comparison matrix where applicable
-   (d) Recommended approach / workflow / pipeline
-   (e) Current limitations and open questions
-   (f) Sources cited with dates — format: numbered list with [Title](URL) and one-line summary
-   (g) Methodology — how many domains researched, approximate number of sources analyzed,
-       sub-questions investigated, and any domains where coverage was thin
+1. Cross-reference findings across domains — identify where specialists AGREE and CONTRADICT
+2. IMPORTANT: A cross-agent reasoning analysis is included (section '_cross_agent_reasoning').
+   Address contradictions it found, acknowledge unfilled blind spots, omit suspicious citations.
+3. Present both perspectives when sources disagree. Do not silently pick a winner.
+4. Flag temporal conflicts and single-source claims.
+5. Assign confidence ratings (High/Medium/Low) to major conclusions.
+6. Produce sections: (a) Executive summary, (b) Detailed findings by theme, (c) Comparison matrix,
+   (d) Recommended approach, (e) Limitations and open questions, (f) Sources cited, (g) Methodology
 
 Original question: {USER_QUERY}" \
   -c /tmp/deep-extracts/all_specialist_outputs.md \
   -o ~/Documents/ObsidianNotes/Claude-Research/{OUTPUT_FILENAME}.md \
   --max-tokens 16000
 ```
-
-Gemini's large context window handles all specialist outputs in a single call — no timeout risk, no subagent turn limits.
 
 ### Step 5: Enhance and Write to Obsidian
 
@@ -334,60 +332,90 @@ After Gemini returns the synthesis:
 3. Add wiki-links for cross-referencing
 4. Report key findings to the user conversationally
 
-#### Fallback
+**Fallback:** If Gemini synthesis fails, synthesize directly in the main conversation window.
 
-If Gemini synthesis fails (API error, rate limit), fall back to synthesizing directly in the main conversation window by reading all extracted specialist files and writing the report manually.
+### Step 5.5: Post-Synthesis Refinement (Depth 2 Only)
+
+**ONLY runs if user requested `--depth 2` or said "go deeper".** Skip for depth 1 (default).
+
+1. Dispatch an evaluation agent to read the synthesis and identify 1-2 most significant remaining gaps (weakest evidence, missing critical comparisons).
+2. If gaps found, dispatch 1-2 targeted agents (`max_turns: 15`, background) for each.
+3. Re-run synthesis with original context plus refinement outputs.
+4. Add "Refinement Notes" subsection to Methodology explaining what was added.
+
+If evaluation returns "NO REFINEMENT NEEDED", skip re-synthesis.
+
+---
+
+## Pipeline Summary
+
+```
+Step 0:  Decompose → 4-6 sub-questions, show plan, check depth flag
+Step 1:  Dispatch parallel agents (max_turns=25, 8-min wall-clock timeout)
+         ↳ Poll progress every 20s, report to user
+Step 2:  Extract outputs from JSONL transcripts
+Step 3:  Content-aware gap check:
+         3a: Size pre-screen (catch crashes)
+         3b: LLM quality evaluation (rate 1-5 per domain)
+         3c: Context-enriched second-pass for weak domains
+Step 3.5: Cross-agent reasoning:
+         - Contradiction detection
+         - Blind spot analysis
+         - Source quality audit
+         ↳ Optional: one targeted blind-spot fill agent
+Step 4:  Gemini synthesis (all outputs + reasoning analysis)
+Step 5:  Obsidian frontmatter + wiki-links + report to user
+Step 5.5: [Depth 2 only] Post-synthesis refinement:
+         - Evaluate report for remaining gaps
+         - Dispatch 1-2 targeted agents
+         - Re-synthesize with new data
+```
 
 ---
 
 ## Design Rationale
 
-This skill uses a hybrid multi-agent architecture informed by how the major AI platforms implement deep research. Understanding these design choices helps explain why the skill works the way it does.
+This skill uses a hybrid multi-agent architecture informed by how the major AI platforms implement deep research.
 
 ### How the Platforms Do It
 
-| Dimension | OpenAI Deep Research | Gemini Deep Research | Perplexity Deep Research | Claude Research |
+| Dimension | OpenAI Deep Research | Gemini Deep Research | Perplexity | **This Skill** |
 |---|---|---|---|---|
-| **Model** | o3 (reasoning model) | Gemini 2.5 Pro / 3.1 Pro | Internal models | Claude Opus/Sonnet |
-| **Architecture** | Single-agent, inline reasoning | Hierarchical agent, plan-first | Fully reactive loop | Tool-calling loop |
-| **Query approach** | CoT decomposes inline | Explicit plan shown to user | No plan, iterative passes | Context-driven tool calls |
-| **Search backend** | Bing + web browsing | Google Search | Proprietary index | Bing / third-party |
-| **Breadth vs depth** | Depth-adaptive | Breadth-first (plan-driven) | Depth-first by default | Context-window managed |
-| **Conflict handling** | Surfaces contradictions | Synthesis-dominant | Explicit when stark | Synthesis-dominant |
-| **Stopping criteria** | Time/compute budget (5-30 min) | Plan completion | Search budget (dozens of queries) | Tool-call budget |
-| **RAG pattern** | Iterative self-RAG | Hierarchical RAG | Fusion + iterative RAG | Iterative RAG |
-| **Plan visibility** | Internal (reasoning trace) | External (user approval) | None | None |
+| **Architecture** | Single-agent, inline reasoning | Hierarchical, plan-first | Reactive loop | Parallel agents + cross-agent reasoning + synthesis |
+| **Breadth vs depth** | Depth-adaptive | Breadth-first | Depth-first | Breadth-first + iterative depth (reasoning + optional depth 2) |
+| **Conflict handling** | Surfaces contradictions | Synthesis-dominant | Explicit when stark | Explicit: cross-agent reasoning detects before synthesis |
+| **Stopping criteria** | Time/compute budget | Plan completion | Search budget | Content-aware LLM eval + time budget (8 min + max_turns) |
+| **Gap detection** | Implicit (model decides) | Plan completion | Multi-pass saturation | LLM quality eval + cross-agent blind spot detection |
 
 ### Why This Skill Uses a Hybrid Approach
 
-**Multi-agent parallel decomposition** (like Anthropic's own multi-agent research system) gives breadth — each domain gets its own specialist agent that can search independently without competing for context window space.
+- **Multi-agent parallel decomposition** gives breadth — each domain gets its own context window.
+- **Research plan display** (from Gemini) gives user control before expensive work begins.
+- **Content-aware gap detection** uses an LLM to evaluate quality, catching "long but irrelevant" outputs.
+- **Context-enriched second passes** give retry agents the first-pass output, gap descriptions, and cross-domain URLs.
+- **Cross-agent reasoning** reads all outputs together to find contradictions, blind spots, and suspicious citations.
+- **Gemini synthesis** handles all outputs in a single large-context pass with reasoning guidance.
+- **Iterative refinement** (depth 2) evaluates the final report and fills remaining weak spots.
+- **Agent progress reporting** provides visibility through periodic status polling.
+- **Time budgets** (`max_turns: 25` + 8-min wall-clock) prevent runaway agents.
 
-**Research plan display** (borrowed from Gemini) gives the user control over the decomposition before expensive agent work begins.
+### Quality Rules
 
-**Adaptive coverage detection** (inspired by Gemini's plan-completion stopping and Perplexity's multi-pass approach) catches domains where agents failed or returned thin results, triggering a focused second pass.
+1. **Every claim needs a source.** No unsourced assertions in the final report.
+2. **Cross-reference findings.** Single-source = "(single source — unverified)." 3+ sources = high confidence.
+3. **Recency matters.** Prefer last 12 months. Note dates on older sources.
+4. **Acknowledge gaps.** Thin coverage is better disclosed than hidden.
+5. **Separate fact from inference.** Label estimates, projections, and opinions clearly.
+6. **No hallucinated citations.** Cross-agent reasoning audits for suspicious sources.
 
-**Gemini synthesis** (our unique addition) uses Gemini's massive context window to cross-reference all specialist outputs in a single pass — something no single Claude agent could do within its context limits. This is the "fusion RAG" step that Perplexity does internally.
+### Key Lessons
 
-**Conflict-aware synthesis prompts** (inspired by OpenAI's explicit contradiction surfacing) ensure the final report doesn't silently pick winners when sources disagree.
-
-### Quality Rules (applies to all outputs)
-
-These are the non-negotiable quality standards for every research report this skill produces. They are inspired by the best practices across deep research implementations and reflect what makes a report trustworthy vs. hand-wavy.
-
-1. **Every claim needs a source.** No unsourced assertions in the final report. If the synthesis model can't trace a claim to a specialist's cited source, it gets cut or flagged as inference.
-2. **Cross-reference findings.** If only one source says it, flag it as "(single source — unverified)." Convergence across 3+ independent sources = high confidence.
-3. **Recency matters.** Prefer sources from the last 12 months. When using older sources, note the date explicitly.
-4. **Acknowledge gaps.** If a sub-question couldn't be answered well, say so explicitly in the report rather than glossing over it. Thin coverage is better disclosed than hidden.
-5. **Separate fact from inference.** Label estimates, projections, and opinions clearly. "Gartner reports 18% growth" (fact) vs. "This suggests the market will..." (inference).
-6. **No hallucinated citations.** Specialist agents sometimes fabricate URLs or source names. The synthesis step should only cite sources that appear in the specialist outputs with real URLs.
-
-### Key Lessons from the Architecture
-
-1. **Firecrawl CLI as primary search tool**: Agents use `firecrawl search --scrape` via Bash for source discovery — it returns clean LLM-optimized markdown and handles JS-rendered pages, bypassing the WebFetch haiku dependency entirely. `litellm_web_search` is the fallback if firecrawl is unavailable. WebFetch is last resort for specific known URLs only.
-2. **Extraction must handle token-limit restarts**: Agents that hit the 32K output limit restart and produce multiple text blocks. The extraction script must concatenate all blocks (>200 chars), not just take the longest one.
-3. **Budget-based stopping is fragile**: Systems that stop based on a compute budget may halt while under-informed. The coverage gap check (Step 3) compensates by detecting thin results and triggering second-pass agents.
-4. **No system truly solves contradiction handling**: All platforms struggle with conflicting sources. Explicitly instructing the synthesis model to surface disagreements (rather than silently resolving them) produces more trustworthy output.
-5. **Multiple keyword variations per sub-topic**: A single search query creates a blind spot. Using 2-3 different phrasings (general + specific + comparative) per sub-question surfaces different source pools and reduces the chance of missing key data.
+1. **Firecrawl CLI as primary search tool** — clean markdown, handles JS-rendered pages.
+2. **Extraction must handle token-limit restarts** — concatenate all blocks >200 chars.
+3. **Content-aware stopping beats character counting** — a 2K output of noise is worse than 500 chars of solid findings.
+4. **Cross-agent reasoning catches what parallel agents can't** — contradictions and cross-domain blind spots.
+5. **Context-enriched second passes outperform blind retries** — targeted gap-filling vs. redundant re-searching.
+6. **Time budgets prevent pipeline stalls** — `max_turns` + wall-clock timeout force progress.
 
 ---
 
