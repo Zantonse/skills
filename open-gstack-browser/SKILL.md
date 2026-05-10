@@ -1,0 +1,1 @@
+/Users/craigverzosa/.claude/skills/gstack/open-gstack-browser/SKILL.md

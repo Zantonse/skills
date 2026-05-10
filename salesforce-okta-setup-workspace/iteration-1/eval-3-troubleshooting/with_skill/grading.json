@@ -1,0 +1,29 @@
+{
+  "expectations": [
+    {
+      "text": "checks-api-integration-enabled",
+      "passed": true,
+      "evidence": "Step 1 explicitly: 'Enable API Integration checkbox is checked' with navigation path and instructions to reconnect if not showing green checkmark."
+    },
+    {
+      "text": "checks-oauth-auth",
+      "passed": true,
+      "evidence": "Step 1 covers 'Authenticate with Salesforce.com button', OAuth popup flow, popup blocker fix, and error table includes '401 Unauthorized → OAuth token expired → Re-authenticate'."
+    },
+    {
+      "text": "checks-federation-identifier",
+      "passed": true,
+      "evidence": "Step 3 identifies FederationIdentifier as 'The most common missing mapping' with exact instructions to add user.email → FederationIdentifier. Error table also includes 'FederationIdentifier not found in request' row."
+    },
+    {
+      "text": "checks-provisioning-tasks-log",
+      "passed": true,
+      "evidence": "Step 5 is entirely dedicated to 'Check Provisioning Tasks for Errors' with navigation to Tasks tab and table of common error messages to look for."
+    },
+    {
+      "text": "checks-salesforce-profile",
+      "passed": true,
+      "evidence": "Step 4 'Verify User Assignment Has a Profile Set' explicitly states 'This is required. Users cannot be provisioned without a profile assigned in Okta.' with fix instructions."
+    }
+  ]
+}

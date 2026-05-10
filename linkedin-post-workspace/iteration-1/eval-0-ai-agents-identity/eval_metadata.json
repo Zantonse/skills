@@ -1,0 +1,31 @@
+{
+  "eval_id": 0,
+  "eval_name": "ai-agents-identity",
+  "prompt": "Write a LinkedIn post about AI agents and identity security. The angle I care about is that most companies are deploying AI agents without thinking about what identity those agents use — they just use shared service accounts.",
+  "assertions": [
+    {
+      "name": "hook-is-not-preamble",
+      "description": "First line is a direct assertion or insight, not a 'wanted to share' opener or chronological setup"
+    },
+    {
+      "name": "no-em-dash",
+      "description": "Post body contains no em dashes (—)"
+    },
+    {
+      "name": "ends-with-specific-question",
+      "description": "Post ends with a specific, non-generic question (not just 'what do you think?')"
+    },
+    {
+      "name": "proper-hashtags",
+      "description": "Includes 3-5 hashtags in # format at the end of the post"
+    },
+    {
+      "name": "no-corporate-jargon",
+      "description": "Does not use: 'excited', 'thrilled', 'game-changer', 'best-in-class', 'synergy', 'leverage' as verb, 'honored'"
+    },
+    {
+      "name": "includes-rationale",
+      "description": "Output includes a rationale section explaining hook and structure choices"
+    }
+  ]
+}

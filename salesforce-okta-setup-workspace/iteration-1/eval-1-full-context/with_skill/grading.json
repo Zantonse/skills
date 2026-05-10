@@ -1,0 +1,39 @@
+{
+  "expectations": [
+    {
+      "text": "covers-all-7-phases",
+      "passed": true,
+      "evidence": "Output covers Phase 0 (prerequisites), Phase 1 (Okta MCP credentials), Phase 2 (My Domain check), Phase 3 (Okta app creation), Phase 4 (SAML config in Salesforce), Phase 5 (SCIM provisioning), Phase 6 (assign users + verify). All phases present and labeled."
+    },
+    {
+      "text": "references-okta-mcp",
+      "passed": true,
+      "evidence": "Phase 1 explicitly calls 'mcp__demo-okta__get_tenant_management_credentials(demoName: \"deel-oig-poc\")' and explains extracting the Okta domain from the discoveryUrl."
+    },
+    {
+      "text": "includes-browse-commands",
+      "passed": true,
+      "evidence": "Multiple $B goto commands throughout: '$B goto \"...lightning/setup/OrgDomain/home\"', '$B goto \"...admin/apps/active\"', '$B goto \"...SingleSignOn/home\"', '$B goto \"...ManageUsers/home\"', plus $B screenshot commands."
+    },
+    {
+      "text": "correct-saml-entity-id",
+      "passed": true,
+      "evidence": "Phase 4 table clearly shows 'Entity ID: https://saml.salesforce.com'"
+    },
+    {
+      "text": "mentions-federation-identifier",
+      "passed": true,
+      "evidence": "Phase 5 attribute mappings table includes 'user.email → FederationIdentifier (Required for SSO linkage)' and notes 'If FederationIdentifier is missing, add it manually.'"
+    },
+    {
+      "text": "includes-summary-block",
+      "passed": true,
+      "evidence": "Ends with '## Salesforce Integration Complete ✅' block covering SSO (SAML 2.0) and Provisioning (SCIM) sections with test results and demo script notes."
+    },
+    {
+      "text": "mentions-oig-demo-value",
+      "passed": true,
+      "evidence": "Phase 6 includes 'Test Deprovisioning (OIG money shot)' section. Demo Script Notes explicitly list 'Remove assignment → show user deactivated in Salesforce (OIG lifecycle management)' and 'Pair with OIG: run access certification with Salesforce as governed app.'"
+    }
+  ]
+}

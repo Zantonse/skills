@@ -1,0 +1,24 @@
+{
+  "expectations": [
+    {
+      "text": "asks-for-missing-inputs",
+      "passed": true,
+      "evidence": "Comprehensively lists missing inputs across Okta Tenant and Salesforce Org sections including org URL, admin credentials, and integration-specific details."
+    },
+    {
+      "text": "mentions-developer-edition-signup",
+      "passed": false,
+      "evidence": "Asks 'Is this a sandbox, dev org, or production org?' but never directs the user to developer.salesforce.com/signup. No signup path provided for users who don't have a Salesforce org yet."
+    },
+    {
+      "text": "does-not-proceed-blindly",
+      "passed": true,
+      "evidence": "'What You Can't Do Yet' section correctly lists all blocked actions and does not attempt to provide configuration steps without the org URL."
+    },
+    {
+      "text": "explains-prerequisites",
+      "passed": true,
+      "evidence": "Very thorough — covers Okta tenant, Salesforce admin, license availability, SAML cert, app assignment, attribute mappings, and provisioning rules. More comprehensive than the skill version but less action-oriented."
+    }
+  ]
+}

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Deep research via Gemini 3.1 Pro Preview through LiteLLM proxy.
+"""Deep research via Claude Sonnet through LiteLLM proxy (OCM auth).
 
-Sends a research query (with optional context) to Gemini's large context window
+Sends a research query (with optional context) to Claude with extended thinking
 for deep analysis and synthesis. Outputs structured markdown.
 
 Usage:
@@ -20,8 +20,8 @@ Usage:
     # Save to file
     python3 research.py --query "Deep dive on Kubernetes adoption" --output research.md
 
-Environment:
-    LITELLM_API_KEY + LITELLM_BASE_URL (set in ~/.claude-litellm.env)
+Auth:
+    Uses OCM auth via /usr/local/bin/ocm. Requires ocm to be installed and authenticated.
 """
 
 import argparse
@@ -31,29 +31,43 @@ import subprocess
 import sys
 from typing import Optional
 
-
-def _load_env_file():
-    """Auto-load credentials from ~/.claude-litellm.env if env vars are missing."""
-    if os.environ.get("LITELLM_API_KEY"):
-        return
-    env_file = os.path.expanduser("~/.claude-litellm.env")
-    if os.path.exists(env_file):
-        with open(env_file) as f:
-            for line in f:
-                line = line.strip()
-                if line.startswith("export ") and "=" in line:
-                    line = line[7:]
-                    key, _, value = line.partition("=")
-                    key = key.strip()
-                    value = value.strip().strip("'\"")
-                    if value.startswith("$"):
-                        ref_var = value[1:]
-                        value = os.environ.get(ref_var, "")
-                    if key and value:
-                        os.environ[key] = value
+OCM_BINARY = "/usr/local/bin/ocm"
+LITELLM_BASE_URL = "https://llm.atko.ai"
+LITELLM_HOST = "llm.atko.ai"
 
 
-_load_env_file()
+def _get_ocm_token() -> str:
+    """Get a LiteLLM auth token via OCM."""
+    try:
+        result = subprocess.run(
+            [OCM_BINARY, "auth", "litellm", "-s", LITELLM_HOST],
+            capture_output=True,
+            text=True,
+            check=True,
+        )
+        token = result.stdout.strip()
+        if not token:
+            print(
+                "Error: ocm auth returned an empty token. Try running:\n"
+                f"  {OCM_BINARY} auth login",
+                file=sys.stderr,
+            )
+            sys.exit(1)
+        return token
+    except FileNotFoundError:
+        print(
+            f"Error: ocm binary not found at {OCM_BINARY}.\n"
+            "Install ocm or check your PATH.",
+            file=sys.stderr,
+        )
+        sys.exit(1)
+    except subprocess.CalledProcessError as e:
+        print(
+            f"Error: ocm auth failed: {e.stderr.strip()}\n"
+            f"Try running: {OCM_BINARY} auth login",
+            file=sys.stderr,
+        )
+        sys.exit(1)
 
 
 def ensure_anthropic():
@@ -160,21 +174,15 @@ def research(
     mode: str = "general",
     max_tokens: int = 24000,
 ) -> str:
-    """Send a research query to Claude with extended thinking via LiteLLM proxy."""
+    """Send a research query to Claude with extended thinking via LiteLLM proxy (OCM auth)."""
     from anthropic import Anthropic
 
-    api_key = os.environ.get("LITELLM_API_KEY")
-    base_url = os.environ.get("LITELLM_BASE_URL")
-
-    if not api_key or not base_url:
-        print(
-            "Error: LITELLM_API_KEY and LITELLM_BASE_URL must be set.\n"
-            "These should be configured in ~/.claude-litellm.env",
-            file=sys.stderr,
-        )
-        sys.exit(1)
-
-    client = Anthropic(api_key=api_key, base_url=base_url)
+    token = _get_ocm_token()
+    client = Anthropic(
+        api_key=token,
+        base_url=LITELLM_BASE_URL,
+        default_headers={"x-litellm-api-key": f"Bearer {token}"},
+    )
 
     # Select system prompt based on mode
     if system_prompt:

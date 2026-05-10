@@ -1,0 +1,29 @@
+{
+  "expectations": [
+    {
+      "text": "checks-api-integration-enabled",
+      "passed": true,
+      "evidence": "Step 1 'Verify SCIM is Enabled' checks that 'Provisioning to App is Enabled' and the provisioning tab is active."
+    },
+    {
+      "text": "checks-oauth-auth",
+      "passed": true,
+      "evidence": "Step 2 checks 'API Token is set' and references Connected Apps & OAuth Tokens in Salesforce Setup. Mentions token validity but frames it as API token rather than OAuth re-authentication flow."
+    },
+    {
+      "text": "checks-federation-identifier",
+      "passed": false,
+      "evidence": "Step 3 covers email, firstName, lastName, username mappings but never mentions FederationIdentifier by name. Uses 'Missing email mapping' as the example issue — this misses the actual most common root cause for SSO-linked provisioning failures."
+    },
+    {
+      "text": "checks-provisioning-tasks-log",
+      "passed": false,
+      "evidence": "No mention of Okta Provisioning > Tasks tab for checking error logs. The without_skill guide focuses on Salesforce-side Connected Apps checks rather than Okta's own provisioning task audit trail."
+    },
+    {
+      "text": "checks-salesforce-profile",
+      "passed": true,
+      "evidence": "Step 3 'Check User Assignment & Profile Mapping' and 'Then check Profile Mapping' section address the profile assignment requirement."
+    }
+  ]
+}

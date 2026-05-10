@@ -1,0 +1,37 @@
+{
+  "eval_id": 1,
+  "eval_name": "section-filter-se-playbook",
+  "prompt": "/o4aa-knowledge-update --section=se-playbook",
+  "assertions": [
+    {
+      "text": "Pulls all 4 Slack channels including presales-o4aa-a4aa-champions",
+      "passed": true,
+      "evidence": "With-skill report lists all 4 channels. Without-skill only pulled 3."
+    },
+    {
+      "text": "Only updates files in the se-playbook section (9 files), not other sections",
+      "passed": true,
+      "evidence": "Both runs scoped correctly to 9 se-playbook files."
+    },
+    {
+      "text": "Output contains structured report: Files Updated, Files Skipped, Topics Needing Deeper Research",
+      "passed": true,
+      "evidence": "With-skill output has all 3 sections. Without-skill has partial structure."
+    },
+    {
+      "text": "Every update includes [Source: @person, #channel, date] attribution",
+      "passed": true,
+      "evidence": "Both runs included source attribution on all changes."
+    },
+    {
+      "text": "Does not re-add content already present from earlier update run (avoids duplicates)",
+      "passed": true,
+      "evidence": "With-skill skipped 8/9 files correctly. Without-skill made 6 changes, most of which overlap with earlier updates."
+    },
+    {
+      "text": "Includes Confluence pull in addition to Slack",
+      "passed": true,
+      "evidence": "With-skill checked Confluence (15 pages, none field-relevant). Without-skill skipped Confluence."
+    }
+  ]
+}

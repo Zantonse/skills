@@ -1,0 +1,24 @@
+{
+  "expectations": [
+    {
+      "text": "asks-for-missing-inputs",
+      "passed": true,
+      "evidence": "Response explicitly lists the 3 required inputs: Salesforce org URL, Salesforce admin username, and Okta demo name. States 'I need a few things' before proceeding."
+    },
+    {
+      "text": "mentions-developer-edition-signup",
+      "passed": true,
+      "evidence": "Includes 'sign up for free at: https://developer.salesforce.com/signup' with instructions on using work email and expected org URL format."
+    },
+    {
+      "text": "does-not-proceed-blindly",
+      "passed": true,
+      "evidence": "Response is entirely input-collection — no SAML values, no browse commands, no phase steps attempted. Ends with 'Once you have these, I'll handle both sides...' — correctly gating on inputs."
+    },
+    {
+      "text": "explains-prerequisites",
+      "passed": true,
+      "evidence": "Explains each prerequisite: Salesforce org (with signup path), admin username, and Okta demo name (with hint to run /list_demos or /demo-provision)."
+    }
+  ]
+}

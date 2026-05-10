@@ -1,0 +1,23 @@
+{
+  "skill_name": "salesforce-okta-setup",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Set up Salesforce SSO and SCIM for my Deel OIG POC demo. The Salesforce org is at https://orgfarm-7d8ff5c5c1-dev-ed.develop.lightning.force.com, admin is craig.verzosa+deeloig@okta.com, and the Okta demo name is deel-oig-poc. Walk me through configuring both sides.",
+      "expected_output": "Step-by-step guide covering: (1) fetching Okta tenant creds via demo-okta MCP, (2) checking My Domain in Salesforce via browse, (3) adding Salesforce OIN app in Okta, (4) configuring SAML in Salesforce with correct field values, (5) enabling SCIM provisioning in Okta, (6) assigning a test user and verifying provisioning. Output should include the integration summary block.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "I need to add Salesforce.com to my Okta demo tenant so I can show automated user provisioning and SSO for an ILM use case. I haven't set up the Salesforce org yet and don't have the demo details handy.",
+      "expected_output": "Skill should identify missing inputs (Salesforce org URL, Okta demo name, credentials) and ask for them before proceeding. Should mention the Salesforce Developer Edition free signup path if no org exists. Should not proceed with setup steps until it has the required inputs.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "My Salesforce SAML login works in the demo but users aren't being provisioned when I assign them in Okta. I'm using the Salesforce OIN app on my deel-oig-poc tenant. How do I fix this?",
+      "expected_output": "Troubleshooting guidance focused on Phase 5 (SCIM provisioning) and Phase 6 (Connected App OAuth). Should check: API Integration enabled, OAuth re-authentication, FederationIdentifier mapping, Salesforce profile assignment, and Provisioning Tasks error log. Should reference the Common Issues table.",
+      "files": []
+    }
+  ]
+}

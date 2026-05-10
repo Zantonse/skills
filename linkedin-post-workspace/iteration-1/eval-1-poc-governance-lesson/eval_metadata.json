@@ -1,0 +1,31 @@
+{
+  "eval_id": 1,
+  "eval_name": "poc-governance-lesson",
+  "prompt": "Turn these notes into a LinkedIn post:\n- Just wrapped a 3-month proof of concept with a financial services company\n- They came in wanting to replace SailPoint but the real problem turned out to be that nobody owned access reviews — they had 6 different teams all doing them differently\n- We ended up scoping OIG instead of full IGA replacement\n- Key lesson: governance problems are usually people/process problems first, not technology problems\n- The tech fix was actually the easy part",
+  "assertions": [
+    {
+      "name": "hook-leads-with-insight-not-story",
+      "description": "Post opens with the lesson/insight, not the story setup ('Just wrapped a POC...'). The insight should be in the first 1-2 lines."
+    },
+    {
+      "name": "no-em-dash",
+      "description": "Post body contains no em dashes (—)"
+    },
+    {
+      "name": "ends-with-specific-question",
+      "description": "Post ends with a specific, non-generic question"
+    },
+    {
+      "name": "prose-not-bullets",
+      "description": "Post uses prose paragraphs, not a numbered or bulleted list to convey the story"
+    },
+    {
+      "name": "proper-hashtags",
+      "description": "Includes 3-5 hashtags in # format at the end"
+    },
+    {
+      "name": "includes-rationale",
+      "description": "Output includes a rationale section"
+    }
+  ]
+}

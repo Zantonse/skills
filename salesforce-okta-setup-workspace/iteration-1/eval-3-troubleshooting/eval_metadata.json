@@ -1,0 +1,12 @@
+{
+  "eval_id": 3,
+  "eval_name": "scim-provisioning-troubleshoot",
+  "prompt": "My Salesforce SAML login works in the demo but users aren't being provisioned when I assign them in Okta. I'm using the Salesforce OIN app on my deel-oig-poc tenant. How do I fix this?",
+  "assertions": [
+    {"name": "checks-api-integration-enabled", "check": "Output mentions checking that API Integration is enabled in Okta provisioning settings"},
+    {"name": "checks-oauth-auth", "check": "Output mentions re-authenticating or checking the OAuth credentials / API integration connection"},
+    {"name": "checks-federation-identifier", "check": "Output mentions FederationIdentifier attribute mapping as a potential cause"},
+    {"name": "checks-provisioning-tasks-log", "check": "Output mentions checking the Okta Provisioning Tasks or error log to see failure details"},
+    {"name": "checks-salesforce-profile", "check": "Output mentions verifying the Salesforce Profile is set correctly in the user's app assignment"}
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "eval_id": 1,
+  "eval_name": "full-context-setup",
+  "prompt": "Set up Salesforce SSO and SCIM for my Deel OIG POC demo. The Salesforce org is at https://orgfarm-7d8ff5c5c1-dev-ed.develop.lightning.force.com, admin is craig.verzosa+deeloig@okta.com, and the Okta demo name is deel-oig-poc. Walk me through configuring both sides.",
+  "assertions": [
+    {"name": "covers-all-7-phases", "check": "Output covers all phases: Okta credentials, My Domain check, app creation in Okta, SAML config in Salesforce, SCIM provisioning, user assignment, and verification"},
+    {"name": "references-okta-mcp", "check": "Output references using demo-okta MCP (get_tenant_management_credentials or similar) to get Okta API access"},
+    {"name": "includes-browse-commands", "check": "Output includes $B browse commands or navigation instructions for Salesforce admin UI URLs"},
+    {"name": "correct-saml-entity-id", "check": "Output specifies the SAML Entity ID as https://saml.salesforce.com"},
+    {"name": "mentions-federation-identifier", "check": "Output mentions FederationIdentifier as a required attribute mapping"},
+    {"name": "includes-summary-block", "check": "Output includes a completion summary with SSO and Provisioning status sections"},
+    {"name": "mentions-oig-demo-value", "check": "Output includes demo talking points about ILM/OIG use case (deprovisioning, lifecycle management)"}
+  ]
+}

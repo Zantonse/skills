@@ -1,0 +1,11 @@
+{
+  "eval_id": 2,
+  "eval_name": "missing-inputs-handling",
+  "prompt": "I need to add Salesforce.com to my Okta demo tenant so I can show automated user provisioning and SSO for an ILM use case. I haven't set up the Salesforce org yet and don't have the demo details handy.",
+  "assertions": [
+    {"name": "asks-for-missing-inputs", "check": "Output asks for the Salesforce org URL and/or Okta demo name before attempting setup steps"},
+    {"name": "mentions-developer-edition-signup", "check": "Output mentions or links to Salesforce Developer Edition free signup (developer.salesforce.com/signup)"},
+    {"name": "does-not-proceed-blindly", "check": "Output does NOT attempt to provide specific SAML values or browse commands without having the org URL"},
+    {"name": "explains-prerequisites", "check": "Output explains what is needed (Salesforce org, Okta demo tenant) before proceeding"}
+  ]
+}

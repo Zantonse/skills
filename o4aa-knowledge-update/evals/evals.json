@@ -1,0 +1,23 @@
+{
+  "skill_name": "o4aa-knowledge-update",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Update the o4aa knowledge hub from latest field intel",
+      "expected_output": "Pulls from all 4 Slack channels and Confluence, identifies new intelligence, updates relevant content files additively, outputs a structured summary of what changed vs what was skipped",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "/o4aa-knowledge-update --section=products",
+      "expected_output": "Only updates the 5 product section files (o4aa-products, mcp-adapter, mcp-bridge, auth0-for-agents, fga-rag-deep-dive), pulls sources, and reports on those files only",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "The knowledge hub is stale — sync it from what's been happening in the o4aa Slack channels this week",
+      "expected_output": "Recognizes this as a knowledge hub update request, pulls Slack channels, extracts field intelligence, updates affected content files, produces summary",
+      "files": []
+    }
+  ]
+}

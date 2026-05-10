@@ -1,0 +1,31 @@
+{
+  "eval_id": 2,
+  "eval_name": "ciso-accountability-question",
+  "prompt": "I want to post about something that happened in a customer meeting yesterday. The CISO of a large healthcare company asked me: 'We're starting to use AI agents for clinical workflows. What happens when the AI agent accesses a patient record — who's accountable?' I didn't have a crisp answer and had to come back to them. The answer is about identity governance for non-human identities and audit trails. Want to make this into a LinkedIn post.",
+  "assertions": [
+    {
+      "name": "hook-uses-vulnerability-or-question",
+      "description": "Post opens with the CISO's question or the 'I didn't have a crisp answer' admission — not a generic intro about AI in healthcare"
+    },
+    {
+      "name": "no-em-dash",
+      "description": "Post body contains no em dashes (—)"
+    },
+    {
+      "name": "ends-with-specific-question",
+      "description": "Post ends with a specific, discussion-inviting question (not just a statement)"
+    },
+    {
+      "name": "prose-not-numbered-list",
+      "description": "Core answer is delivered in prose, not as a numbered 1-2-3 list (which feels like a slide deck)"
+    },
+    {
+      "name": "proper-hashtags",
+      "description": "Includes 3-5 hashtags in # format, not pipe-separated labels"
+    },
+    {
+      "name": "includes-rationale",
+      "description": "Output includes a rationale section"
+    }
+  ]
+}

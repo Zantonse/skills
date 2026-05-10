@@ -1,0 +1,23 @@
+{
+  "skill_name": "linkedin-post",
+  "evals": [
+    {
+      "id": 0,
+      "prompt": "Write a LinkedIn post about AI agents and identity security. The angle I care about is that most companies are deploying AI agents without thinking about what identity those agents use — they just use shared service accounts.",
+      "expected_output": "A LinkedIn post that opens with a specific, direct hook about AI agents or service accounts (not a generic opener), uses direct assertions with no excessive hedging, is technically precise (names the actual problem), ends with a genuine question, and includes 3-5 hashtags. Should have a brief rationale explaining the hook and structure choices.",
+      "files": []
+    },
+    {
+      "id": 1,
+      "prompt": "Turn these notes into a LinkedIn post:\n- Just wrapped a 3-month proof of concept with a financial services company\n- They came in wanting to replace SailPoint but the real problem turned out to be that nobody owned access reviews — they had 6 different teams all doing them differently\n- We ended up scoping OIG instead of full IGA replacement\n- Key lesson: governance problems are usually people/process problems first, not technology problems\n- The tech fix was actually the easy part",
+      "expected_output": "A LinkedIn post that identifies the most counter-intuitive or interesting point from the bullets (probably the people/process vs. tech angle) and makes it the hook. Should not just reformat the bullets as a numbered list. Should have Craig's direct voice, no jargon, ends with a question. Rationale explains the hook choice.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "I want to post about something that happened in a customer meeting yesterday. The CISO of a large healthcare company asked me: 'We're starting to use AI agents for clinical workflows. What happens when the AI agent accesses a patient record — who's accountable?' I didn't have a crisp answer and had to come back to them. The answer is about identity governance for non-human identities and audit trails. Want to make this into a LinkedIn post.",
+      "expected_output": "A LinkedIn post that opens with the tension (a CISO question Craig couldn't answer on the spot) as the hook — specific and credible. Should ground the reader in the healthcare/clinical AI context, get to the insight about non-human identity governance and audit trails, and end with a question. No generic opener. Rationale explains why starting with the 'I didn't know' moment works.",
+      "files": []
+    }
+  ]
+}

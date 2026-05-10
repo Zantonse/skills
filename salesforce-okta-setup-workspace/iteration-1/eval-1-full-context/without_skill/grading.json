@@ -1,0 +1,39 @@
+{
+  "expectations": [
+    {
+      "text": "covers-all-7-phases",
+      "passed": false,
+      "evidence": "Output has Part 1-6+ but notably missing: no 'get Okta tenant credentials via MCP' phase, wrong order (configures Salesforce before Okta), and no My Domain check. Structure is reasonable but not the skill's 7-phase sequence."
+    },
+    {
+      "text": "references-okta-mcp",
+      "passed": false,
+      "evidence": "No mention of demo-okta MCP or get_tenant_management_credentials. Treats the Okta admin console as a manually-navigated UI without any API credential retrieval step."
+    },
+    {
+      "text": "includes-browse-commands",
+      "passed": false,
+      "evidence": "No $B goto commands. Setup instructions are prose-based ('navigate to Setup > Security > Single Sign-On Settings') rather than automated browse commands."
+    },
+    {
+      "text": "correct-saml-entity-id",
+      "passed": false,
+      "evidence": "Step 1b incorrectly states 'Entity ID: Accept default or use: https://orgfarm-7d8ff5c5c1-dev-ed.develop.lightning.force.com' — the correct SAML Entity ID for Salesforce is always https://saml.salesforce.com. This would break SSO if followed."
+    },
+    {
+      "text": "mentions-federation-identifier",
+      "passed": false,
+      "evidence": "Attribute mappings cover firstName, lastName, email, username but do not mention FederationIdentifier — the critical mapping that links Okta user identity to Salesforce's federation lookup."
+    },
+    {
+      "text": "includes-summary-block",
+      "passed": false,
+      "evidence": "No structured completion summary. Output ends with setup steps but no 'Integration Complete' summary block with SSO/Provisioning status sections."
+    },
+    {
+      "text": "mentions-oig-demo-value",
+      "passed": false,
+      "evidence": "No mention of OIG, ILM, lifecycle management, or deprovisioning demo value. Generic Salesforce+Okta SSO guide without presales framing."
+    }
+  ]
+}

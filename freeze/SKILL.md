@@ -1,0 +1,1 @@
+/Users/craigverzosa/.claude/skills/gstack/freeze/SKILL.md
